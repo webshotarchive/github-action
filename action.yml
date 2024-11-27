@@ -1,0 +1,68 @@
+name: 'The name of your action here'
+description: 'Provide a description here'
+author: 'Your name or organization here'
+
+# Define your inputs here.
+inputs:
+  milliseconds:
+    description: 'Your input description here'
+    required: true
+    default: '1000'
+  screenshotsFolder:
+    description: 'Path to screenshots folder'
+    required: true
+    default: 'dist/cypress'
+
+  clientId:
+    description: 'API client id'
+    required: true
+
+  clientSecret:
+    description: 'API client secret'
+    required: true
+
+  projectId:
+    description: 'Project ID'
+    required: true
+
+  commitSha:
+    description: 'API client secret'
+    required: true
+
+  compareCommitSha:
+    description: 'A commit sha to compare with, typically the target branch'
+    required: false
+
+  branchName:
+    description: 'Metadata: branch name'
+    required: false
+
+  mergedBranch:
+    description: 'The branch that was merged'
+    required: false
+
+  type:
+    description: 'Commit type, merge or push'
+    required: false
+
+  comment:
+    description: 'Should the job leave a comment on PR'
+    required: false
+
+  tags:
+    description: 'Metadata: tags ["pr"]'
+    required: false
+    default: ''
+
+# Define your outputs here.
+outputs:
+  time:
+    description: 'Your output description here'
+
+permissions:
+  issues: write
+  pull-requests: write
+
+runs:
+  using: node20
+  main: dist/index.js
