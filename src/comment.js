@@ -68,10 +68,10 @@ const comment = async ({ images, token, message, commitSha }) => {
           // const url = `${host}/project/dashboard/${image.projectId}/blob/${image.path}?showDuplicates=true&filterCommit=${compareCommitSha},${commitSha}&addToCompare=true`
           let link = ''
           if (image.diffCommitSha && commitSha) {
-            const path = encodeURIComponent(image.path)
+            const path = image.path.split('/').map(encodeURIComponent).join('/')
             const pre = image.diffCommitSha.substring(0, 10)
             const post = commitSha.substring(0, 10)
-            const webshotUrl = `${host}/project/dashboard/${image.projectId}/blob/${path}?showDuplicates=true&filterCommit=${pre},${post}&addToCompare=true`
+            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${pre},${post}&addToCompare=true`
             link = `[Webshot Archive ${pre}...${post}](${webshotUrl})`
           }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) vs ${image.diffCommitSha?.substring(0, 10)} ${link}|`
