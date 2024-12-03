@@ -231,7 +231,8 @@ async function run() {
     if (shouldComment && isPullRequest && imageResponses.length) {
       await comment({
         token,
-        images: imageResponses
+        images: imageResponses,
+        commitSha
       })
     } else if (shouldComment && isPullRequest && imageResponses.length === 0) {
       core.warning('No new screenshots found')

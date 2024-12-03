@@ -43,7 +43,7 @@ const createOrUpdateComment = async (octokit, repo, issue_number, body) => {
   }
 }
 
-const comment = async ({ images, token, message }) => {
+const comment = async ({ images, token, message, commitSha }) => {
   try {
     const context = github.context
     const octokit = github.getOctokit(token)
@@ -63,7 +63,15 @@ const comment = async ({ images, token, message }) => {
         } else if (!image.diffCount) {
           return `| ![${image.originalName}](${url}) ${image.originalName}| (new)|`
         } else if (image.diffCount > 0) {
-          return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) vs ${image.diffCommitSha?.substring(0, 10)}|`
+          const host = 'https://www.webshotarchive.com'
+
+          // const url = `${host}/project/dashboard/${image.projectId}/blob/${image.path}?showDuplicates=true&filterCommit=${compareCommitSha},${commitSha}&addToCompare=true`
+          let link = ''
+          if (image.diffCommitSha && commitSha) {
+            const webshotUrl = `${host}/project/dashboard/${image.projectId}/blob/${image.path}?showDuplicates=true&filterCommit=${image.diffCommitSha},${commitSha}&addToCompare=true`
+            link = `[Webshot Archive](${webshotUrl})`
+          }
+          return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) vs ${image.diffCommitSha?.substring(0, 10)} ${link}|`
         }
         core.debug(`Unknown image: ${image.originalName}`)
         return ''
