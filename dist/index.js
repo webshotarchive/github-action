@@ -30199,7 +30199,7 @@ const comment = async ({ images, token, message, commitSha }) => {
             const pre = image.diffCommitSha.substring(0, 10)
             const post = commitSha.substring(0, 10)
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${pre},${post}&addToCompare=true`
-            link = `[Webshot Archive ${pre}...${post}](${webshotUrl})`
+            link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) vs ${image.diffCommitSha?.substring(0, 10)} ${link}|`
         }
