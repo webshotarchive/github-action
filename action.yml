@@ -1,13 +1,9 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Webshot Archive Action'
+description: 'Archive screenshots from a cypress project'
+author: 'WebshotArchive.com'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
-    required: true
-    default: '1000'
   screenshotsFolder:
     description: 'Path to screenshots folder'
     required: true
@@ -26,8 +22,7 @@ inputs:
     required: true
 
   commitSha:
-    description: 'API client secret'
-    required: true
+    description: 'The screenshot commit sha to associate with the images'
 
   compareCommitSha:
     description: 'A commit sha to compare with, typically the target branch'
@@ -57,7 +52,7 @@ inputs:
 # Define your outputs here.
 outputs:
   time:
-    description: 'Your output description here'
+    description: 'none'
 
 permissions:
   issues: write

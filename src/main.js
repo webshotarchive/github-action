@@ -1,9 +1,17 @@
 const core = require('@actions/core')
+const github = require('@actions/github')
 const { wait } = require('./wait')
 const fs = require('fs').promises
 const path = require('path')
 const mime = require('mime-types')
 const { comment } = require('./comment')
+const {
+  getDefaultCommitSha,
+  getDefaultCompareCommitSha,
+  getDefaultBranchName,
+  determineEventTypeAndMergedBranch,
+  getDefaultComment
+} = require('./defaultFields')
 
 async function readFilesRecursively(dir) {
   const files = await fs.readdir(dir)
@@ -119,19 +127,28 @@ function parseTagsFromName(fileName) {
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const { eventType, mergedBranch: defaultMergedBranchName } =
+      determineEventTypeAndMergedBranch()
+    // required fields
     const localPath = core.getInput('screenshotsFolder', { required: true })
     const clientId = core.getInput('clientId', { required: true })
+    const projectId = core.getInput('projectId', { required: true })
     const clientSecret = core.getInput('clientSecret', { required: true })
-    const commitSha = core.getInput('commitSha', { required: true })
-    const compareCommitSha = core.getInput('compareCommitSha')
-    const compareBranch = core.getInput('compareBranch')
-    const branchName = core.getInput('branchName')
+    // defaulted fields
+    const commitSha = core.getInput('commitSha') || getDefaultCommitSha()
+    const compareCommitSha =
+      core.getInput('compareCommitSha') || getDefaultCompareCommitSha()
+    const compareBranch = core.getInput('compareBranch') // deprecated
+    const branchName = core.getInput('branchName') || getDefaultBranchName()
+    const commentInput = core.getInput('comment') || getDefaultComment()
+    const mergedBranch =
+      core.getInput('mergedBranch') || defaultMergedBranchName
+    const type = core.getInput('type') || eventType
+    // nondefaulted fields
     const tags = core.getInput('tags')
-    const projectId = core.getInput('projectId')
-    const commentInput = core.getInput('comment')
-    const mergedBranch = core.getInput('mergedBranch')
-    const type = core.getInput('type')
+
+    core.debug(`defaultMergedBranchName: ${defaultMergedBranchName}`)
+    core.debug(`eventType: ${eventType}`)
     core.debug(`comment: ${commentInput}, ${typeof commentInput}`)
 
     const shouldComment = commentInput === true || commentInput === 'true'
@@ -155,7 +172,6 @@ async function run() {
 
     core.debug(`branchName: ${branchName}`)
     core.debug(`tags ${tags}, ${typeof tags}`)
-
     const screenshotFiles = await readFilesRecursively(localPath)
     core.debug(`Found ${screenshotFiles.length} files in ${path}`)
 
@@ -183,6 +199,9 @@ async function run() {
 
         if (/\(failed\)\.png$/.test(file.name)) {
           allTags.add('failed')
+        }
+        if (github.context.eventName === 'pull_request') {
+          allTags.add('pr')
         }
         const response = await readAndUploadImage(file.path, {
           clientId,
@@ -246,22 +265,6 @@ async function run() {
         message: 'No new screenshots found'
       })
     }
-
-    // The files are now ready to be uploaded to an API endpoint
-    // You would typically use a library like axios or node-fetch here to make the API call
-    // For example:
-    // await axios.post('https://api.example.com/upload', { files: filesToUpload });
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-    // updating the comment
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
