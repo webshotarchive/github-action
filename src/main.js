@@ -1,4 +1,5 @@
 const core = require('@actions/core')
+const github = require('@actions/github')
 const { wait } = require('./wait')
 const fs = require('fs').promises
 const path = require('path')
@@ -171,7 +172,6 @@ async function run() {
 
     core.debug(`branchName: ${branchName}`)
     core.debug(`tags ${tags}, ${typeof tags}`)
-
     const screenshotFiles = await readFilesRecursively(localPath)
     core.debug(`Found ${screenshotFiles.length} files in ${path}`)
 
@@ -199,6 +199,9 @@ async function run() {
 
         if (/\(failed\)\.png$/.test(file.name)) {
           allTags.add('failed')
+        }
+        if (github.context.eventName === 'pull_request') {
+          allTags.add('pr')
         }
         const response = await readAndUploadImage(file.path, {
           clientId,

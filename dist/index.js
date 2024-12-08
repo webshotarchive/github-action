@@ -30345,6 +30345,7 @@ module.exports.determineEventTypeAndMergedBranch = () => {
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(7484)
+const github = __nccwpck_require__(3228)
 const { wait } = __nccwpck_require__(8644)
 const fs = (__nccwpck_require__(9896).promises)
 const path = __nccwpck_require__(6928)
@@ -30517,7 +30518,6 @@ async function run() {
 
     core.debug(`branchName: ${branchName}`)
     core.debug(`tags ${tags}, ${typeof tags}`)
-
     const screenshotFiles = await readFilesRecursively(localPath)
     core.debug(`Found ${screenshotFiles.length} files in ${path}`)
 
@@ -30545,6 +30545,9 @@ async function run() {
 
         if (/\(failed\)\.png$/.test(file.name)) {
           allTags.add('failed')
+        }
+        if (github.context.eventName === 'pull_request') {
+          allTags.add('pr')
         }
         const response = await readAndUploadImage(file.path, {
           clientId,
