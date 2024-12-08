@@ -93,3 +93,7 @@ module.exports.determineEventTypeAndMergedBranch = () => {
     throw error
   }
 }
+
+module.exports.getDefaultComment = () => {
+  return github.context.eventName === 'pull_request' ? 'true' : ''
+}

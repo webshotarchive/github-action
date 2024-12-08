@@ -30338,6 +30338,10 @@ module.exports.determineEventTypeAndMergedBranch = () => {
   }
 }
 
+module.exports.getDefaultComment = () => {
+  return github.context.eventName === 'pull_request' ? 'true' : ''
+}
+
 
 /***/ }),
 
@@ -30355,8 +30359,8 @@ const {
   getDefaultCommitSha,
   getDefaultCompareCommitSha,
   getDefaultBranchName,
-  getDefaultMergedBranch,
-  determineEventTypeAndMergedBranch
+  determineEventTypeAndMergedBranch,
+  getDefaultComment
 } = __nccwpck_require__(8793)
 
 async function readFilesRecursively(dir) {
@@ -30486,7 +30490,7 @@ async function run() {
       core.getInput('compareCommitSha') || getDefaultCompareCommitSha()
     const compareBranch = core.getInput('compareBranch') // deprecated
     const branchName = core.getInput('branchName') || getDefaultBranchName()
-    const commentInput = core.getInput('comment') || 'true'
+    const commentInput = core.getInput('comment') || getDefaultComment()
     const mergedBranch =
       core.getInput('mergedBranch') || defaultMergedBranchName
     const type = core.getInput('type') || eventType
