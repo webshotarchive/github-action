@@ -30,7 +30,16 @@ module.exports.getDefaultBranchName = () => {
 
 module.exports.determineEventTypeAndMergedBranch = () => {
   try {
-    const commitSha = process.env.COMMIT_SHA
+    let commitSha = ''
+    if (process.env.COMMIT_SHA) {
+      commitSha = process.env.COMMIT_SHA
+    } else if (github.context.eventName === 'pull_request') {
+      commitSha = github.context.payload.pull_request.head.sha
+      core.info(`PR head SHA: ${commitSha}`)
+    } else {
+      commitSha = github.context.sha
+      core.info(`Push event SHA: ${commitSha}`)
+    }
     core.info(`Checking commit: ${commitSha}`)
 
     let eventType = 'push'
