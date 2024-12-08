@@ -30239,6 +30239,99 @@ module.exports = { comment }
 
 /***/ }),
 
+/***/ 8793:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(7484)
+const github = __nccwpck_require__(3228)
+const { execSync } = __nccwpck_require__(5317)
+
+module.exports.getDefaultCommitSha = () => {
+  let commitSha = ''
+  if (github.context.eventName === 'pull_request') {
+    commitSha = github.context.payload.pull_request.head.sha
+    core.info(`PR head SHA: ${commitSha}`)
+  } else if (github.context.eventName === 'push') {
+    commitSha = github.context.payload.after
+    core.info(`Push event SHA: ${commitSha}`)
+  }
+  return commitSha
+}
+
+module.exports.getDefaultCompareCommitSha = () => {
+  if (github.context.eventName === 'pull_request') {
+    return github.context.payload.pull_request.base.sha
+  }
+  return github.context.payload.before // for push events
+}
+
+module.exports.getDefaultBranchName = () => {
+  if (github.context.eventName === 'pull_request') {
+    return github.context.payload.pull_request.head.ref
+  }
+  return github.context.ref.replace('refs/heads/', '')
+}
+
+module.exports.determineEventTypeAndMergedBranch = () => {
+  try {
+    const commitSha = process.env.COMMIT_SHA
+    core.info(`Checking commit: ${commitSha}`)
+
+    let eventType = 'push'
+    let mergedBranch = ''
+
+    if (github.context.eventName === 'pull_request') {
+      core.info('This is a PR')
+      // Always treat PR events as pushes
+      eventType = 'push'
+    } else if (github.context.eventName === 'push') {
+      // For push events, check if it's a merge between any branches
+      const parentsOutput = execSync(`git rev-list --parents -n 1 ${commitSha}`)
+        .toString()
+        .trim()
+      const parents = parentsOutput.split(' ').slice(1) // Remove the commit SHA itself
+
+      if (parents.length > 1) {
+        core.info('This is a merge between branches')
+        eventType = 'merge'
+
+        // Get the second parent hash
+        const secondParent = parents[1]
+        try {
+          const branchName = execSync(
+            `git name-rev --name-only ${secondParent}`
+          )
+            .toString()
+            .trim()
+          // Remove 'remotes/origin/' prefix if present
+          mergedBranch = branchName.replace('remotes/origin/', '')
+        } catch (error) {
+          core.warning(`Could not determine branch name: ${error.message}`)
+          mergedBranch = 'unknown'
+        }
+      } else {
+        core.info('This is a regular push')
+        eventType = 'push'
+      }
+    } else {
+      core.info('This is a regular push')
+      eventType = 'push'
+    }
+
+    // Set outputs (equivalent to >> $GITHUB_ENV)
+    // core.exportVariable('EVENT_TYPE', eventType)
+    // core.exportVariable('MERGED_BRANCH', mergedBranch)
+
+    return { eventType, mergedBranch }
+  } catch (error) {
+    core.setFailed(`Error determining event type: ${error.message}`)
+    throw error
+  }
+}
+
+
+/***/ }),
+
 /***/ 7936:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -30248,6 +30341,13 @@ const fs = (__nccwpck_require__(9896).promises)
 const path = __nccwpck_require__(6928)
 const mime = __nccwpck_require__(4096)
 const { comment } = __nccwpck_require__(3220)
+const {
+  getDefaultCommitSha,
+  getDefaultCompareCommitSha,
+  getDefaultBranchName,
+  getDefaultMergedBranch,
+  determineEventTypeAndMergedBranch
+} = __nccwpck_require__(8793)
 
 async function readFilesRecursively(dir) {
   const files = await fs.readdir(dir)
@@ -30363,19 +30463,28 @@ function parseTagsFromName(fileName) {
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
+    const { eventType, mergedBranch: defaultMergedBranchName } =
+      determineEventTypeAndMergedBranch()
+    // required fields
     const localPath = core.getInput('screenshotsFolder', { required: true })
     const clientId = core.getInput('clientId', { required: true })
+    const projectId = core.getInput('projectId', { required: true })
     const clientSecret = core.getInput('clientSecret', { required: true })
-    const commitSha = core.getInput('commitSha', { required: true })
-    const compareCommitSha = core.getInput('compareCommitSha')
-    const compareBranch = core.getInput('compareBranch')
-    const branchName = core.getInput('branchName')
+    // defaulted fields
+    const commitSha = core.getInput('commitSha') || getDefaultCommitSha()
+    const compareCommitSha =
+      core.getInput('compareCommitSha') || getDefaultCompareCommitSha()
+    const compareBranch = core.getInput('compareBranch') // deprecated
+    const branchName = core.getInput('branchName') || getDefaultBranchName()
+    const commentInput = core.getInput('comment') || 'true'
+    const mergedBranch =
+      core.getInput('mergedBranch') || defaultMergedBranchName
+    const type = core.getInput('type') || eventType
+    // nondefaulted fields
     const tags = core.getInput('tags')
-    const projectId = core.getInput('projectId')
-    const commentInput = core.getInput('comment')
-    const mergedBranch = core.getInput('mergedBranch')
-    const type = core.getInput('type')
+
+    core.debug(`defaultMergedBranchName: ${defaultMergedBranchName}`)
+    core.debug(`eventType: ${eventType}`)
     core.debug(`comment: ${commentInput}, ${typeof commentInput}`)
 
     const shouldComment = commentInput === true || commentInput === 'true'
@@ -30490,22 +30599,6 @@ async function run() {
         message: 'No new screenshots found'
       })
     }
-
-    // The files are now ready to be uploaded to an API endpoint
-    // You would typically use a library like axios or node-fetch here to make the API call
-    // For example:
-    // await axios.post('https://api.example.com/upload', { files: filesToUpload });
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-    // updating the comment
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
