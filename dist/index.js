@@ -30424,6 +30424,10 @@ async function run() {
           .filter(tag => tag)
 
         const allTags = new Set([...tagsAsArray, ...tagsFromName])
+
+        if (/\(failed\)\.png$/.test(file.name)) {
+          allTags.add('failed')
+        }
         const response = await readAndUploadImage(file.path, {
           clientId,
           clientSecret,
