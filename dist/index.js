@@ -30176,6 +30176,14 @@ const comment = async ({ images, token, message, commitSha }) => {
     const octokit = github.getOctokit(token)
 
     const tableRows = images
+      .filter((image, index) => {
+        const hasImage = !!image
+
+        if (!hasImage) {
+          core.debug(`No image found at index ${index}`)
+        }
+        return hasImage
+      })
       .map(image => {
         // @todo fix this. make it dynamic, but png is the only supported format for now.
         const isFailed = /\(failed\)\.png$/.test(image.path)
@@ -30230,6 +30238,7 @@ ${images.length ? table : ''}
       body
     )
   } catch (error) {
+    core.debug(error)
     core.setFailed(`Failed to create or update comment: ${error.message}`)
   }
 }
