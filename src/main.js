@@ -147,6 +147,8 @@ async function run() {
     // nondefaulted fields
     const tags = core.getInput('tags')
 
+    core.info(`head commit sha: ${commitSha}`)
+    core.info(`base commit sha: ${compareCommitSha}`)
     core.debug(`defaultMergedBranchName: ${defaultMergedBranchName}`)
     core.debug(`eventType: ${eventType}`)
     core.debug(`comment: ${commentInput}, ${typeof commentInput}`)

@@ -6,10 +6,8 @@ module.exports.getDefaultCommitSha = () => {
   let commitSha = ''
   if (github.context.eventName === 'pull_request') {
     commitSha = github.context.payload.pull_request.head.sha
-    core.info(`PR head SHA: ${commitSha}`)
   } else if (github.context.eventName === 'push') {
     commitSha = github.context.payload.after
-    core.info(`Push event SHA: ${commitSha}`)
   }
   return commitSha
 }
@@ -35,18 +33,18 @@ module.exports.determineEventTypeAndMergedBranch = () => {
       commitSha = process.env.COMMIT_SHA
     } else if (github.context.eventName === 'pull_request') {
       commitSha = github.context.payload.pull_request.head.sha
-      core.info(`PR head SHA: ${commitSha}`)
+      core.debug(`PR head SHA: ${commitSha}`)
     } else {
       commitSha = github.context.sha
-      core.info(`Push event SHA: ${commitSha}`)
+      core.debug(`Push event SHA: ${commitSha}`)
     }
-    core.info(`Checking commit: ${commitSha}`)
+    core.debug(`Checking commit: ${commitSha}`)
 
     let eventType = 'push'
     let mergedBranch = ''
 
     if (github.context.eventName === 'pull_request') {
-      core.info('This is a PR')
+      core.debug('This is a PR')
       // Always treat PR events as pushes
       eventType = 'push'
     } else if (github.context.eventName === 'push') {
