@@ -82,7 +82,7 @@ const comment = async ({ images, token, message, commitSha }) => {
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${pre},${post}&addToCompare=true`
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
-          return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) vs ${image.diffCommitSha?.substring(0, 10)} ${link}|`
+          return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) ${image.diffCount}px | ${image.diffCommitSha?.substring(0, 10)} | ${link} |`
         }
         core.debug(`Unknown image: ${image.originalName}`)
         return ''
