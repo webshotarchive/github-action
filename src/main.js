@@ -229,13 +229,15 @@ async function run() {
         } else if (resultJson.data && resultJson.error) {
           imageResponses.push({
             ...resultJson.data,
+            metadata: resultJson.metadata,
             error: resultJson.error
           })
         } else if (compareCommitSha) {
           // if the image is different from the compare image, push it
           // if there is no compare image, push it (this is a new image)
+          const minPixToIgnore = resultJson.data?.minDiffPixelsToIgnore || 0
           if (
-            resultJson.data?.diffCount > 0 ||
+            resultJson.data?.diffCount > minPixToIgnore ||
             !resultJson.metadata?.compareImage
           ) {
             imageResponses.push(resultJson.data)
