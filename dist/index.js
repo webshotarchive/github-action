@@ -30576,8 +30576,10 @@ async function run() {
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
-        if (resultJson.error) {
-          core.warning(`Error uploading ${file.name}: ${resultJson.error}`)
+        if (resultJson.error || resultJson.statusCode === '400') {
+          const errorMessage =
+            resultJson.error || resultJson.message || 'unknown error'
+          core.warning(`Error uploading ${file.name}: ${errorMessage}`)
         }
         // only push if the response has changed if compareCommitSha is provided
         // or the image is failed
@@ -30599,7 +30601,7 @@ async function run() {
           ) {
             imageResponses.push(resultJson.data)
           }
-        } else {
+        } else if (resultJson.data) {
           // if not compareCommitSha, always push?
           imageResponses.push(resultJson.data)
         }
