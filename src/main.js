@@ -219,14 +219,21 @@ async function run() {
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
-        if (resultJson.error || resultJson.statusCode === '400') {
-          const errorMessage =
+        let errorMessage = ''
+        if (resultJson.error || resultJson.statusCode === 400) {
+          errorMessage =
             resultJson.error || resultJson.message || 'unknown error'
           core.warning(`Error uploading ${file.name}: ${errorMessage}`)
         }
         // only push if the response has changed if compareCommitSha is provided
         // or the image is failed
-        if (/\(failed\)\.png$/.test(file.path)) {
+        if (errorMessage) {
+          imageResponses.push({
+            ...resultJson.data,
+            metadata: resultJson.metadata,
+            error: errorMessage
+          })
+        } else if (/\(failed\)\.png$/.test(file.path)) {
           imageResponses.push(resultJson.data)
         } else if (resultJson.data && resultJson.error) {
           imageResponses.push({

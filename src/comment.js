@@ -66,8 +66,10 @@ const comment = async ({ images, token, message, commitSha }) => {
         const diffUrl = `${STATIC_IMAGE_HOST}/api/image/id/${image.uniqueId}.diff.png`
         if (isFailed) {
           return `| ![${image.originalName}](${url}) ${image.originalName}| (failed)|`
-        } else if (image.error) {
+        } else if (image.originalName && image.error) {
           return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error}|`
+        } else if (image.error) {
+          return `| Error: | ${image.error}|`
         } else if (!image.diffCount) {
           return `| ![${image.originalName}](${url}) ${image.originalName}| (new)|`
         } else if (image.diffCount > 0) {
