@@ -3,7 +3,6 @@ const github = require('@actions/github')
 const { wait } = require('./wait')
 const fs = require('fs').promises
 const path = require('path')
-const sharp = require('sharp')
 const mime = require('mime-types')
 const { comment } = require('./comment')
 const {
@@ -52,9 +51,6 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('compareBranch', opts.compareBranch)
   formData.append('projectId', opts.projectId)
   formData.append('type', opts.type)
-  formData.append('height', opts.metadata?.height)
-  formData.append('width', opts.metadata?.width)
-  formData.append('size', opts.metadata?.size)
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
   }
@@ -88,8 +84,6 @@ async function readAndUploadImage(imagePath, opts = {}) {
   try {
     // Read the file from the given path
     const imageBuffer = await fs.readFile(imagePath)
-    const metadata = await sharp(imageBuffer).metadata()
-    core.debug(`metadata: ${JSON.stringify(metadata, null, 2)}`)
     // Create a File object (or Blob in Node.js)
     const fileName = path.basename(imagePath)
 
@@ -105,11 +99,6 @@ async function readAndUploadImage(imagePath, opts = {}) {
     const imageFile = new Blob([imageBuffer], { type: mimeType }) // Adjust type if needed
     opts.path = imagePath
 
-    opts.metadata = {
-      height: metadata.height,
-      width: metadata.width,
-      size: metadata.size
-    }
     // Call the uploadImage function
     const result = await uploadImage(imageFile, fileName, opts)
 

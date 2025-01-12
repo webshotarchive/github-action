@@ -68,8 +68,7 @@
     "@actions/github": "^6.0.0",
     "axios": "^1.7.7",
     "file-type": "^19.5.0",
-    "mime-types": "^2.1.35",
-    "sharp": "^0.33.5"
+    "mime-types": "^2.1.35"
   },
   "devDependencies": {
     "@babel/core": "^7.25.8",
