@@ -40,13 +40,12 @@ module.exports.determineEventTypeAndMergedBranch = () => {
     }
     core.debug(`Checking commit: ${commitSha}`)
 
-    let eventType = 'push'
+    const eventName = github.context.eventName
     let mergedBranch = ''
 
     if (github.context.eventName === 'pull_request') {
-      core.debug('This is a PR')
+      core.debug('This is a pull_request')
       // Always treat PR events as pushes
-      eventType = 'push'
     } else if (github.context.eventName === 'push') {
       // For push events, check if it's a merge between any branches
       const parentsOutput = execSync(`git rev-list --parents -n 1 ${commitSha}`)
@@ -56,7 +55,6 @@ module.exports.determineEventTypeAndMergedBranch = () => {
 
       if (parents.length > 1) {
         core.info('This is a merge between branches')
-        eventType = 'merge'
 
         // Get the second parent hash
         const secondParent = parents[1]
@@ -73,19 +71,17 @@ module.exports.determineEventTypeAndMergedBranch = () => {
           mergedBranch = 'unknown'
         }
       } else {
-        core.info('This is a regular push')
-        eventType = 'push'
+        core.info('This is a push')
       }
     } else {
-      core.info('This is a regular push')
-      eventType = 'push'
+      core.info(`this is a ${github.context.eventName}`)
     }
 
     // Set outputs (equivalent to >> $GITHUB_ENV)
     // core.exportVariable('EVENT_TYPE', eventType)
     // core.exportVariable('MERGED_BRANCH', mergedBranch)
 
-    return { eventType, mergedBranch }
+    return { eventName, mergedBranch }
   } catch (error) {
     core.setFailed(`Error determining event type: ${error.message}`)
     throw error

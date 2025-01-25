@@ -30295,13 +30295,12 @@ module.exports.determineEventTypeAndMergedBranch = () => {
     }
     core.debug(`Checking commit: ${commitSha}`)
 
-    let eventType = 'push'
+    const eventName = github.context.eventName
     let mergedBranch = ''
 
     if (github.context.eventName === 'pull_request') {
-      core.debug('This is a PR')
+      core.debug('This is a pull_request')
       // Always treat PR events as pushes
-      eventType = 'push'
     } else if (github.context.eventName === 'push') {
       // For push events, check if it's a merge between any branches
       const parentsOutput = execSync(`git rev-list --parents -n 1 ${commitSha}`)
@@ -30311,7 +30310,6 @@ module.exports.determineEventTypeAndMergedBranch = () => {
 
       if (parents.length > 1) {
         core.info('This is a merge between branches')
-        eventType = 'merge'
 
         // Get the second parent hash
         const secondParent = parents[1]
@@ -30328,19 +30326,17 @@ module.exports.determineEventTypeAndMergedBranch = () => {
           mergedBranch = 'unknown'
         }
       } else {
-        core.info('This is a regular push')
-        eventType = 'push'
+        core.info('This is a push')
       }
     } else {
-      core.info('This is a regular push')
-      eventType = 'push'
+      core.info(`this is a ${github.context.eventName}`)
     }
 
     // Set outputs (equivalent to >> $GITHUB_ENV)
     // core.exportVariable('EVENT_TYPE', eventType)
     // core.exportVariable('MERGED_BRANCH', mergedBranch)
 
-    return { eventType, mergedBranch }
+    return { eventName, mergedBranch }
   } catch (error) {
     core.setFailed(`Error determining event type: ${error.message}`)
     throw error
@@ -30409,7 +30405,7 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('branchName', opts.branchName)
   formData.append('compareBranch', opts.compareBranch)
   formData.append('projectId', opts.projectId)
-  formData.append('type', opts.type)
+  formData.append('eventName', opts.eventName)
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
   }
@@ -30486,7 +30482,7 @@ function parseTagsFromName(fileName) {
  */
 async function run() {
   try {
-    const { eventType, mergedBranch: defaultMergedBranchName } =
+    const { eventName, mergedBranch: defaultMergedBranchName } =
       determineEventTypeAndMergedBranch()
     // required fields
     const localPath = core.getInput('screenshotsFolder', { required: true })
@@ -30502,14 +30498,14 @@ async function run() {
     const commentInput = core.getInput('comment') || getDefaultComment()
     const mergedBranch =
       core.getInput('mergedBranch') || defaultMergedBranchName
-    const type = core.getInput('type') || eventType
+
     // nondefaulted fields
     const tags = core.getInput('tags')
 
     core.info(`head commit sha: ${commitSha}`)
     core.info(`base commit sha: ${compareCommitSha}`)
     core.debug(`defaultMergedBranchName: ${defaultMergedBranchName}`)
-    core.debug(`eventType: ${eventType}`)
+    core.debug(`eventName: ${eventName}`)
     core.debug(`comment: ${commentInput}, ${typeof commentInput}`)
 
     const shouldComment = commentInput === true || commentInput === 'true'
@@ -30574,7 +30570,7 @@ async function run() {
           branchName,
           tags: Array.from(allTags),
           mergedBranch,
-          type
+          eventName
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)

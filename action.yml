@@ -37,7 +37,8 @@ inputs:
     required: false
 
   type:
-    description: 'Commit type, merge or push'
+    description:
+      '[DEPRECATED] this is now determined by the type of Github event'
     required: false
 
   comment:

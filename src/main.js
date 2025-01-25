@@ -50,7 +50,7 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('branchName', opts.branchName)
   formData.append('compareBranch', opts.compareBranch)
   formData.append('projectId', opts.projectId)
-  formData.append('type', opts.type)
+  formData.append('eventName', opts.eventName)
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
   }
@@ -127,7 +127,7 @@ function parseTagsFromName(fileName) {
  */
 async function run() {
   try {
-    const { eventType, mergedBranch: defaultMergedBranchName } =
+    const { eventName, mergedBranch: defaultMergedBranchName } =
       determineEventTypeAndMergedBranch()
     // required fields
     const localPath = core.getInput('screenshotsFolder', { required: true })
@@ -143,14 +143,14 @@ async function run() {
     const commentInput = core.getInput('comment') || getDefaultComment()
     const mergedBranch =
       core.getInput('mergedBranch') || defaultMergedBranchName
-    const type = core.getInput('type') || eventType
+
     // nondefaulted fields
     const tags = core.getInput('tags')
 
     core.info(`head commit sha: ${commitSha}`)
     core.info(`base commit sha: ${compareCommitSha}`)
     core.debug(`defaultMergedBranchName: ${defaultMergedBranchName}`)
-    core.debug(`eventType: ${eventType}`)
+    core.debug(`eventName: ${eventName}`)
     core.debug(`comment: ${commentInput}, ${typeof commentInput}`)
 
     const shouldComment = commentInput === true || commentInput === 'true'
@@ -215,7 +215,7 @@ async function run() {
           branchName,
           tags: Array.from(allTags),
           mergedBranch,
-          type
+          eventName
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
