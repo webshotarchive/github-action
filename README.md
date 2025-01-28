@@ -114,5 +114,5 @@ The action supports the following paramets to `with:`
 - [Discord](https://discord.gg/u8DEaW9z) - say hi and ask questions.
 - [Webshot Archive Docs](https://docs.webshotarchive.dev) - API Details,
   tutorials, recipes, and blog posts.
-- [Create an Issue](https://github.com/toshimoto821/webshotarchive/issues/new) -
+- [Create an Issue](https://github.com/webshotarchive/github-action/issues/new) -
   Report a bug or request a feature.

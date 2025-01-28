@@ -1,7 +1,7 @@
 {
-  "name": "toshi-action",
+  "name": "@webshotarchive/github-action",
   "description": "GitHub Actions JavaScript Template",
-  "version": "0.0.2",
+  "version": "0.0.7",
   "author": "",
   "private": true,
   "homepage": "https://github.com/actions/javascript-action#readme",
