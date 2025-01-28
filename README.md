@@ -36,7 +36,12 @@ to generate these credentials.
 > [!NOTE]
 >
 > You will need to have a paid plan to use this action. Plans start for as
-> little as $5/month and new accounts receive 14 day free trial.
+> little as $5/month and new accounts receive 14 day free trial. I'm a solo
+> developer and the service is not free to me to host and neither is my time.
+> Donate to developer, just trying to have a side project that pays the bills.
+>
+> Reach out to me on [Discord](https://discord.gg/u8DEaW9z) if you want to say
+> hello.
 
 Below is an example of how to install this action in a Github Actions workflow.
 
