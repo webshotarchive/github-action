@@ -104,3 +104,15 @@ The action supports the following paramets to `with:`
   - images ending in (failed).png get `failed` tag.
   - images with title tags-[tag1, tag2, tag3] get the tags `tag1`, `tag2`,
     `tag3`.
+
+---
+
+---
+
+## Need Help?
+
+- [Discord](https://discord.gg/u8DEaW9z) - say hi and ask questions.
+- [Webshot Archive Docs](https://docs.webshotarchive.dev) - API Details,
+  tutorials, recipes, and blog posts.
+- [Create an Issue](https://github.com/toshimoto821/webshotarchive/issues/new) -
+  Report a bug or request a feature.
