@@ -1,205 +1,106 @@
-# Create a JavaScript Action
+# Webshot Archive Github Action
 
 [![GitHub Super-Linter](https://github.com/actions/javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/javascript-action/actions/workflows/ci.yml/badge.svg)
 
-Use this template to bootstrap the creation of a JavaScript action. :rocket:
+Use this action to integrate [Webshot Archive](https://www.webshotarchive.com)
+into your Github Actions workflow. The action will upload images/screenshots
+from your CI test runner to Webshot Archive. For actions that run on
+`pull_request` events, the action will also comment on the PR with any
+differences between the current branch and the target branch.
 
-This template includes compilation support, tests, a validation workflow,
-publishing, and versioning guidance.
+Integrates with Github Actions to comment on PRs with any differences between
+the current branch and the target branch.
 
-If you are new, there's also a simpler introduction in the
-[Hello world JavaScript action repository](https://github.com/actions/hello-world-javascript-action).
+![Comment on PR](./docs/assets/pixel-comment.png)
 
-## Create Your Own Action
+Use the Webshot Archive UI to view all screenshots and compare them side by
+side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 
-To create your own action, you can use this repository as a template! Just
-follow the below instructions:
+#### Resources:
 
-1. Click the **Use this template** button at the top of the repository
-1. Select **Create a new repository**
-1. Select an owner and name for your new repository
-1. Click **Create repository**
-1. Clone your new repository
-
-> [!IMPORTANT]
->
-> Make sure to remove or update the [`CODEOWNERS`](./CODEOWNERS) file! For
-> details on how to use this file, see
-> [About code owners](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
+- [Webshot Archive Website](https://www.webshotarchive.com)
+- [Webshot Archive Github Action](https://github.com/toshimoto821/webshotarchive)
+- [Webshot Archive Docs](https://docs.webshotarchive.dev/)
+  - [Webshot Archive API](https://docs.webshotarchive.dev/docs/api)
+  - [Recipes](https://docs.webshotarchive.dev/docs/recipes/push-pr-action)
+  - [Tutorials](https://docs.webshotarchive.dev/docs/intro)
 
 ## Initial Setup
 
-After you've cloned the repository to your local machine or codespace, you'll
-need to perform some initial setup steps before you can develop your action.
+Prior to installing this action you will need to create a Webshot Archive
+service account with client id and secret. Follow the instructions on the
+[Webshot Archive Docs](https://docs.webshotarchive.dev/docs/tutorial-basics/create-client-credentials)
+to generate these credentials.
 
 > [!NOTE]
 >
-> You'll need to have a reasonably modern version of
-> [Node.js](https://nodejs.org) handy. If you are using a version manager like
-> [`nodenv`](https://github.com/nodenv/nodenv) or
-> [`nvm`](https://github.com/nvm-sh/nvm), you can run `nodenv install` in the
-> root of your repository to install the version specified in
-> [`package.json`](./package.json). Otherwise, 20.x or later should work!
+> You will need to have a paid plan to use this action. Plans start for as
+> little as $5/month and new accounts receive 14 day free trial.
 
-1. :hammer_and_wrench: Install the dependencies
-
-   ```bash
-   npm install
-   ```
-
-1. :building_construction: Package the JavaScript for distribution
-
-   ```bash
-   npm run bundle
-   ```
-
-1. :white_check_mark: Run the tests
-
-   ```bash
-   $ npm test
-
-   PASS  ./index.test.js
-     ✓ throws invalid number (3ms)
-     ✓ wait 500 ms (504ms)
-     ✓ test runs (95ms)
-
-   ...
-   ```
-
-## Update the Action Metadata
-
-The [`action.yml`](action.yml) file defines metadata about your action, such as
-input(s) and output(s). For details about this file, see
-[Metadata syntax for GitHub Actions](https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions).
-
-When you copy this repository, update `action.yml` with the name, description,
-inputs, and outputs for your action.
-
-## Update the Action Code
-
-The [`src/`](./src/) directory is the heart of your action! This contains the
-source code that will be run when your action is invoked. You can replace the
-contents of this directory with your own code.
-
-There are a few things to keep in mind when writing your action code:
-
-- Most GitHub Actions toolkit and CI/CD operations are processed asynchronously.
-  In `main.js`, you will see that the action is run in an `async` function.
-
-  ```javascript
-  const core = require('@actions/core')
-  //...
-
-  async function run() {
-    try {
-      //...
-    } catch (error) {
-      core.setFailed(error.message)
-    }
-  }
-  ```
-
-  For more information about the GitHub Actions toolkit, see the
-  [documentation](https://github.com/actions/toolkit/blob/main/README.md).
-
-So, what are you waiting for? Go ahead and start customizing your action!
-
-1. Create a new branch
-
-   ```bash
-   git checkout -b releases/v1
-   ```
-
-1. Replace the contents of `src/` with your action code
-1. Add tests to `__tests__/` for your source code
-1. Format, test, and build the action
-
-   ```bash
-   npm run all
-   ```
-
-   > [!WARNING]
-   >
-   > This step is important! It will run [`ncc`](https://github.com/vercel/ncc)
-   > to build the final JavaScript action code with all dependencies included.
-   > If you do not run this step, your action will not work correctly when it is
-   > used in a workflow. This step also includes the `--license` option for
-   > `ncc`, which will create a license file for all of the production node
-   > modules used in your project.
-
-1. Commit your changes
-
-   ```bash
-   git add .
-   git commit -m "My first action is ready!"
-   ```
-
-1. Push them to your repository
-
-   ```bash
-   git push -u origin releases/v1
-   ```
-
-1. Create a pull request and get feedback on your action
-1. Merge the pull request into the `main` branch
-
-Your action is now published! :rocket:
-
-For information about versioning your action, see
-[Versioning](https://github.com/actions/toolkit/blob/main/docs/action-versioning.md)
-in the GitHub Actions toolkit.
-
-## Validate the Action
-
-You can now validate the action by referencing it in a workflow file. For
-example, [`ci.yml`](./.github/workflows/ci.yml) demonstrates how to reference an
-action in the same repository.
+Below is an example of how to install this action in a Github Actions workflow.
 
 ```yaml
-steps:
-  - name: Checkout
-    id: checkout
-    uses: actions/checkout@v3
+on:
+  push: # running on push will use previous commit to compare against
+    branches:
+      - main # or any other branch you want to run this action on
+  pull_request: # running on pull_request will use base branch to compare against
 
-  - name: Test Local Action
-    id: test-action
-    uses: ./
-    with:
-      milliseconds: 1000
+permissions:
+  actions: read # required for action to run
+  contents: read
+  issues: write # required for PR comments
+  pull-requests: write # required for PR comments
 
-  - name: Print Output
-    id: output
-    run: echo "${{ steps.test-action.outputs.time }}"
+jobs:
+  main:
+    runs-on: ubuntu-latest # or any other runner you want to use
+    steps:
+      # ...
+      # previous steps should run your tests and generate screenshots locally
+      # ...
+
+      - name: WebshotArchive Action
+        uses: toshimoto821/webshotarchive@v0.0.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          screenshotsFolder: dist/cypress # path to where your screenshots are written
+          clientId: ${{ secrets.CLIENT_ID }}
+          clientSecret: ${{ secrets.CLIENT_SECRET }}
+          projectId: ${{secrets.PROJECT_ID}}
 ```
 
-For example workflow runs, check out the
-[Actions tab](https://github.com/actions/javascript-action/actions)! :rocket:
+See the [Getting Started](https://docs.webshotarchive.dev/docs/intro) docs for
+more details.
 
-## Usage
+## API
 
-After testing, you can create version tag(s) that developers can use to
-reference different stable versions of your action. For more information, see
-[Versioning](https://github.com/actions/toolkit/blob/main/docs/action-versioning.md)
-in the GitHub Actions toolkit.
+The action supports the following paramets to `with:`
 
-To include the action in a workflow in another repository, you can use the
-`uses` syntax with the `@` symbol to reference a specific branch, tag, or commit
-hash.
+| Parameter         | Type    | Required | Default (Pull Request)                      | Default (Push)               | Description                                      |
+| ----------------- | ------- | -------- | ------------------------------------------- | ---------------------------- | ------------------------------------------------ |
+| screenshotsFolder | string  | Yes      | -                                           | -                            | The folder containing the screenshots to upload. |
+| clientId          | string  | Yes      | -                                           | -                            | Your client ID.                                  |
+| clientSecret      | string  | Yes      | -                                           | -                            | Your client secret.                              |
+| projectId         | string  | Yes      | -                                           | -                            | The Webshot Archive projectId.                   |
+| commitSha         | string  | No       | `${{github.event.pull_request.head.sha }}`  | `${{ github.event.after }}`  | The commit SHA represented in the screenshot     |
+| compareCommitSha  | string  | No       | `${{ github.event.pull_request.base.sha }}` | `${{ github.event.before }}` | The commit SHA to compare with.                  |
+| branchName        | string  | No       | `${{ github.head_ref }}`                    | `${GITHUB_REF##*/}`          | The branch associated with the screenshot.       |
+| mergedBranch      | string  | No       | -                                           | \* see below                 | The branch that was merged.                      |
+| comment           | boolean | No       | true                                        | false                        | Whether to comment on the PR.                    |
+| tags              | string  | No       | \* see below                                | \* see below                 | Tags to add to the screenshots.                  |
 
-```yaml
-steps:
-  - name: Checkout
-    id: checkout
-    uses: actions/checkout@v4
+##### Notes
 
-  - name: Run my Action
-    id: run-action
-    uses: actions/javascript-action@v1 # Commit with the `v1` tag
-    with:
-      milliseconds: 1000
-
-  - name: Print Output
-    id: output
-    run: echo "${{ steps.run-action.outputs.time }}"
-```
+- `compareBranch`: Is deprecated and will be removed in a future release.
+- `mergedBranch`: The merged branch logic is handled by the Webshot Archive API
+  [here](https://github.com/toshimoto821/webshotarchive/blob/main/src/defaultFields.js#L31-L95).
+  The point is to have the merged branch be the branch that was merged into.
+- `tags`: The tags logic is handled by the Webshot Archive API
+  [here](https://github.com/toshimoto821/webshotarchive/blob/main/src/main.js#L192-L205).
+  Key points:
+  - images ending in (failed).png get `failed` tag.
+  - images with title tags-[tag1, tag2, tag3] get the tags `tag1`, `tag2`,
+    `tag3`.
