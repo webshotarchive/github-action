@@ -1,15 +1,15 @@
-# Webshot Archive Github Action
+# Webshot Archive GitHub Action
 
 [![GitHub Super-Linter](https://github.com/actions/javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/javascript-action/actions/workflows/ci.yml/badge.svg)
 
 Use this action to integrate [Webshot Archive](https://www.webshotarchive.com)
-into your Github Actions workflow. The action will upload images/screenshots
+into your GitHub Actions workflow. The action will upload images/screenshots
 from your CI test runner to Webshot Archive. For actions that run on
 `pull_request` events, the action will also comment on the PR with any
 differences between the current branch and the target branch.
 
-Integrates with Github Actions to comment on PRs with any differences between
+Integrates with GitHub Actions to comment on PRs with any differences between
 the current branch and the target branch.
 
 ![Comment on PR](./docs/assets/pixel-comment.png)
@@ -17,10 +17,10 @@ the current branch and the target branch.
 Use the Webshot Archive UI to view all screenshots and compare them side by
 side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 
-#### Resources:
+## Resources
 
-- [Webshot Archive Website](https://www.webshotarchive.com)
-- [Webshot Archive Github Action](https://github.com/toshimoto821/webshotarchive)
+- [Webshot Archive Site](https://www.webshotarchive.com)
+- [Webshot Archive GitHub Action](https://github.com/toshimoto821/webshotarchive)
 - [Webshot Archive Docs](https://docs.webshotarchive.dev/)
   - [Webshot Archive API](https://docs.webshotarchive.dev/docs/api)
   - [Recipes](https://docs.webshotarchive.dev/docs/recipes/push-pr-action)
@@ -29,7 +29,7 @@ side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 ## Initial Setup
 
 Prior to installing this action you will need to create a Webshot Archive
-service account with client id and secret. Follow the instructions on the
+service account with client ID and secret. Follow the instructions on the
 [Webshot Archive Docs](https://docs.webshotarchive.dev/docs/tutorial-basics/create-client-credentials)
 to generate these credentials.
 
@@ -43,7 +43,7 @@ to generate these credentials.
 > Reach out to me on [Discord](https://discord.gg/u8DEaW9z) if you want to say
 > hello.
 
-Below is an example of how to install this action in a Github Actions workflow.
+Below is an example of how to install this action in a GitHub Actions workflow.
 
 ```yaml
 on:
@@ -97,7 +97,7 @@ The action supports the following paramets to `with:`
 | comment           | boolean | No       | true                                        | false                        | Whether to comment on the PR.                    |
 | tags              | string  | No       | \* see below                                | \* see below                 | Tags to add to the screenshots.                  |
 
-##### Notes
+### Notes
 
 - `compareBranch`: Is deprecated and will be removed in a future release.
 - `mergedBranch`: The merged branch logic is handled by the Webshot Archive API
