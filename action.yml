@@ -1,6 +1,7 @@
 name: 'Webshot Archive Action'
-description: 'Archive screenshots from a cypress project'
+description: 'Archive screenshots from a e2e tests'
 author: 'WebshotArchive.com'
+icon: 'docs/assets/logo-512.png'
 
 # Define your inputs here.
 inputs:
