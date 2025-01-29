@@ -19,7 +19,7 @@ side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 
 ## Resources
 
-- [Webshot Archive Website](https://www.webshotarchive.com)
+- [Webshot Archive Site](https://www.webshotarchive.com)
 - [Webshot Archive GitHub Action](https://github.com/toshimoto821/webshotarchive)
 - [Webshot Archive Docs](https://docs.webshotarchive.dev/)
   - [Webshot Archive API](https://docs.webshotarchive.dev/docs/api)
