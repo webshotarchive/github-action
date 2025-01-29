@@ -30216,10 +30216,17 @@ const comment = async ({ images, token, message, commitSha }) => {
             const path = image.path.split('/').map(encodeURIComponent).join('/')
             const pre = image.diffCommitSha.substring(0, 10)
             const post = commitSha.substring(0, 10)
+
+            const compareImageTimestamp = image.compareImageTimestamp
+              ? new Date(image.compareImageTimestamp)
+                  .toISOString()
+                  .split('T')[0]
+              : null
             const [createdAt] = new Date(image.createdAt)
               .toISOString()
               .split('T')
-            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${post}%2C${pre}&addToCompare=true&startDate=${createdAt}&endDate=${createdAt}`
+
+            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${post}%2C${pre}&addToCompare=true&startDate=${compareImageTimestamp || createdAt}&endDate=${createdAt}`
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} |`
@@ -30615,7 +30622,10 @@ async function run() {
             resultJson.data?.diffCount > minPixToIgnore ||
             !resultJson.metadata?.compareImage
           ) {
-            imageResponses.push(resultJson.data)
+            imageResponses.push({
+              ...resultJson.data,
+              compareImageTimestamp: resultJson.metadata?.compareImageTimestamp
+            })
           }
         } else if (resultJson.data) {
           // if not compareCommitSha, always push?

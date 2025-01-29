@@ -249,7 +249,10 @@ async function run() {
             resultJson.data?.diffCount > minPixToIgnore ||
             !resultJson.metadata?.compareImage
           ) {
-            imageResponses.push(resultJson.data)
+            imageResponses.push({
+              ...resultJson.data,
+              compareImageTimestamp: resultJson.metadata?.compareImageTimestamp
+            })
           }
         } else if (resultJson.data) {
           // if not compareCommitSha, always push?
