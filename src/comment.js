@@ -81,7 +81,9 @@ const comment = async ({ images, token, message, commitSha }) => {
             const path = image.path.split('/').map(encodeURIComponent).join('/')
             const pre = image.diffCommitSha.substring(0, 10)
             const post = commitSha.substring(0, 10)
-            const [createdAt] = image.createdAt.toISOString().split('T')
+            const [createdAt] = new Date(image.createdAt)
+              .toISOString()
+              .split('T')
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${post}%2C${pre}&addToCompare=true&startDate=${createdAt}&endDate=${createdAt}`
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
