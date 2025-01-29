@@ -1,7 +1,8 @@
 name: 'Webshot Archive Action'
 description: 'Archive screenshots from a e2e tests'
 author: 'WebshotArchive.com'
-icon: 'docs/assets/logo-512.png'
+icon: 'camera'
+color: 'orange'
 
 # Define your inputs here.
 inputs:
