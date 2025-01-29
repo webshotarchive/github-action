@@ -16,3 +16,11 @@ MD030:
 # Code block style
 MD046:
   style: fenced
+
+MD013:
+  tables: false
+  code_blocks: true
+  line_length: 160
+  heading_line_length: 80
+  code_block_line_length: 80
+  strict: false
