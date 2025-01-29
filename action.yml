@@ -1,5 +1,5 @@
-name: 'Webshot Archive Action'
-description: 'Archive screenshots from a e2e tests'
+name: 'Webshot Archive Github Action'
+description: 'Upload and archive screenshots from E2E tests'
 author: 'WebshotArchive.com'
 branding:
   icon: 'camera'
