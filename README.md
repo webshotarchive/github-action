@@ -21,16 +21,16 @@ side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 
 - [Webshot Archive Site](https://www.webshotarchive.com)
 - [Webshot Archive GitHub Action](https://github.com/toshimoto821/webshotarchive)
-- [Webshot Archive Docs](https://docs.webshotarchive.dev/)
-  - [Webshot Archive API](https://docs.webshotarchive.dev/docs/api)
-  - [Recipes](https://docs.webshotarchive.dev/docs/recipes/push-pr-action)
-  - [Tutorials](https://docs.webshotarchive.dev/docs/intro)
+- [Webshot Archive Docs](https://docs.webshotarchive.com/)
+  - [Webshot Archive API](https://docs.webshotarchive.com/docs/api)
+  - [Recipes](https://docs.webshotarchive.com/docs/recipes/push-pr-action)
+  - [Tutorials](https://docs.webshotarchive.com/docs/intro)
 
 ## Initial Setup
 
 Prior to installing this action you will need to create a Webshot Archive
 service account with client ID and secret. Follow the instructions on the
-[Webshot Archive Docs](https://docs.webshotarchive.dev/docs/tutorial-basics/create-client-credentials)
+[Webshot Archive Docs](https://docs.webshotarchive.com/docs/tutorial-basics/create-client-credentials)
 to generate these credentials.
 
 > [!NOTE]
@@ -77,7 +77,7 @@ jobs:
           projectId: ${{secrets.PROJECT_ID}}
 ```
 
-See the [Getting Started](https://docs.webshotarchive.dev/docs/intro) docs for
+See the [Getting Started](https://docs.webshotarchive.com/docs/intro) docs for
 more details.
 
 ## API
@@ -117,7 +117,7 @@ The action supports the following paramets to `with:`
 ## Need Help?
 
 - [Discord](https://discord.gg/u8DEaW9z) - say hi and ask questions.
-- [Webshot Archive Docs](https://docs.webshotarchive.dev) - API Details,
+- [Webshot Archive Docs](https://docs.webshotarchive.com) - API Details,
   tutorials, recipes, and blog posts.
 - [Create an Issue](https://github.com/webshotarchive/github-action/issues/new) -
   Report a bug or request a feature.
