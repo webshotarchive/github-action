@@ -58,6 +58,7 @@ const comment = async ({ images, token, message, commitSha }) => {
         return hasImage
       })
       .map(image => {
+        const host = 'https://www.webshotarchive.com'
         // @todo fix this. make it dynamic, but png is the only supported format for now.
         const isFailed = /\(failed\)\.png$/.test(image.path)
 
@@ -67,14 +68,49 @@ const comment = async ({ images, token, message, commitSha }) => {
         if (isFailed) {
           return `| ![${image.originalName}](${url}) ${image.originalName}| (failed)|`
         } else if (image.originalName && image.error) {
+          const compareImage = image.metadata?.compareImage
+          if (compareImage) {
+            let link = ''
+            const path = image.path.split('/').map(encodeURIComponent).join('/')
+            const post = commitSha.substring(0, 10)
+            const pre = (image.metadata?.compareCommitSha || '').substring(
+              0,
+              10
+            )
+
+            const compareImageTimestamp = image.metadata?.compareImageTimestamp
+              ? new Date(image.metadata?.compareImageTimestamp)
+                  .toISOString()
+                  .split('T')[0]
+              : null
+            core.debug(`path: ${path}`)
+            core.debug(`compareImageTimestamp: ${compareImageTimestamp}`)
+            const [createdAt] = new Date(image.createdAt)
+              .toISOString()
+              .split('T')
+            core.debug(`createdAt: ${createdAt}`)
+            const queryParams = [
+              'showDuplicates=true',
+              `filterCommit=${post}%2C${pre}`,
+              'addToCompare=true',
+              `startDate=${compareImageTimestamp || createdAt}`,
+              `endDate=${createdAt}`,
+              'imageSelectView=square'
+            ].join('&')
+            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
+            link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
+            const compareSrc = `${STATIC_IMAGE_HOST}/api/image/id/${compareImage}.png`
+            const diffCommitSha = (
+              image?.metadata?.compareCommitSha || ''
+            ).substring(0, 10)
+            return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error} ![${image.originalName}](${compareSrc}) ${diffCommitSha} / ${link}|`
+          }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error}|`
         } else if (image.error) {
           return `| Error: | ${image.error}|`
         } else if (!image.diffCount) {
           return `| ![${image.originalName}](${url}) ${image.originalName}| (new)|`
         } else if (image.diffCount > 0) {
-          const host = 'https://www.webshotarchive.com'
-
           // const url = `${host}/project/dashboard/${image.projectId}/blob/${image.path}?showDuplicates=true&filterCommit=${compareCommitSha},${commitSha}&addToCompare=true`
           let link = ''
           if (image.diffCommitSha && commitSha) {
@@ -91,7 +127,14 @@ const comment = async ({ images, token, message, commitSha }) => {
               .toISOString()
               .split('T')
 
-            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?showDuplicates=true&filterCommit=${post}%2C${pre}&addToCompare=true&startDate=${compareImageTimestamp || createdAt}&endDate=${createdAt}`
+            const queryParams = [
+              'showDuplicates=true',
+              `filterCommit=${post}%2C${pre}`,
+              'addToCompare=true',
+              `startDate=${compareImageTimestamp || createdAt}`,
+              `endDate=${createdAt}`
+            ].join('&')
+            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} |`
