@@ -95,7 +95,10 @@ const comment = async ({ images, token, message, commitSha }) => {
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
             const compareSrc = `${STATIC_IMAGE_HOST}/api/image/id/${compareImage}.png`
-            return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error} ![${image.originalName}](${compareSrc}) ${image.diffCommitSha?.substring(0, 10)} / ${link}|`
+            const diffCommitSha = (
+              image?.metadata?.compareCommitSha || ''
+            ).substring(0, 10)
+            return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error} ![${image.originalName}](${compareSrc}) ${diffCommitSha} / ${link}|`
           }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error}|`
         } else if (image.error) {
