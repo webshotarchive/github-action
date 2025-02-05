@@ -73,17 +73,22 @@ const comment = async ({ images, token, message, commitSha }) => {
             let link = ''
             const path = image.path.split('/').map(encodeURIComponent).join('/')
             const post = commitSha.substring(0, 10)
-            const pre = compareImage.substring(0, 10)
+            const pre = (image.metadata?.compareCommitSha || '').substring(
+              0,
+              10
+            )
 
-            const compareImageTimestamp = image.compareImageTimestamp
-              ? new Date(image.compareImageTimestamp)
+            const compareImageTimestamp = image.metadata?.compareImageTimestamp
+              ? new Date(image.metadata?.compareImageTimestamp)
                   .toISOString()
                   .split('T')[0]
               : null
-
+            core.debug(`path: ${path}`)
+            core.debug(`compareImageTimestamp: ${compareImageTimestamp}`)
             const [createdAt] = new Date(image.createdAt)
               .toISOString()
               .split('T')
+            core.debug(`createdAt: ${createdAt}`)
             const queryParams = [
               'showDuplicates=true',
               `filterCommit=${post}%2C${pre}`,
