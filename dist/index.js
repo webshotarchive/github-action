@@ -30238,13 +30238,13 @@ const comment = async ({ images, token, message, commitSha }) => {
             const diffCommitSha = (
               image?.metadata?.compareCommitSha || ''
             ).substring(0, 10)
-            return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error} ![${image.originalName}](${compareSrc}) ${diffCommitSha} / ${link}|`
+            return `| ${image.error} ![${image.originalName}](${compareSrc}) ${diffCommitSha} / ${link} | ![${image.originalName}](${url}) ${image.originalName}|`
           }
           return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error}|`
         } else if (image.error) {
           return `| Error: | ${image.error}|`
         } else if (!image.diffCount) {
-          return `| ![${image.originalName}](${url}) ${image.originalName}| (new)|`
+          return `| (new) | ![${image.originalName}](${url}) ${image.originalName}|`
         } else if (image.diffCount > 0) {
           // const url = `${host}/project/dashboard/${image.projectId}/blob/${image.path}?showDuplicates=true&filterCommit=${compareCommitSha},${commitSha}&addToCompare=true`
           let link = ''
@@ -30272,7 +30272,7 @@ const comment = async ({ images, token, message, commitSha }) => {
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
-          return `| ![${image.originalName}](${url}) ${image.originalName}| ![${image.originalName}](${diffUrl}) ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} |`
+          return `| ![${image.originalName}](${diffUrl}) ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} | ![${image.originalName}](${url}) ${image.originalName}|`
         }
         core.debug(`Unknown image: ${image.originalName}`)
         return ''
