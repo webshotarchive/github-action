@@ -30280,8 +30280,8 @@ const comment = async ({ images, token, message, commitSha }) => {
       .join('\n')
 
     const table = `
-| Image | Diff |
-| ----- | ---- |
+| Diff | Image |
+| ---- | ----- |
 ${tableRows}
     `
 
