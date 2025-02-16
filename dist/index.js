@@ -30617,7 +30617,7 @@ async function run() {
         core.debug(`Uploading ${file.name}`)
         // parse tags out of name
 
-        const tagsFromName = parseTagsFromName(file.name)
+        const tagsFromName = parseTagsFromName(file.path)
         const tagsAsArray = tags
           .split(',')
           .map(tag => tag.trim())
@@ -30625,7 +30625,10 @@ async function run() {
 
         const allTags = new Set([...tagsAsArray, ...tagsFromName])
 
-        if (/\(failed\)\.png$/.test(file.name)) {
+        if (
+          /\(failed\)\.png$/.test(file.path) ||
+          /test-failed/.test(file.path)
+        ) {
           allTags.add('failed')
         }
         if (github.context.eventName === 'pull_request') {
