@@ -118,6 +118,16 @@ function parseTagsFromName(fileName) {
       .filter(tag => tag.trim() !== '')
       .map(tag => tag.trim())
   }
+  // playwright transform [tags] to --tagone-tagtwo--
+  // does not support tags with dashhes such as full-page
+  const playwrightPattern = /--([^-]+)--/ // Match content between -- anywhere in string
+  const playwrightMatch = fileName.match(playwrightPattern)
+  if (playwrightMatch && playwrightMatch[1]) {
+    return playwrightMatch[1]
+      .split('-')
+      .filter(tag => tag.trim() !== '')
+      .map(tag => tag.trim())
+  }
   return []
 }
 
