@@ -154,6 +154,8 @@ async function run() {
     const mergedBranch =
       core.getInput('mergedBranch') || defaultMergedBranchName
 
+    const failedTestPattern = core.getInput('failedTestPattern') || 'failed'
+    const failedTestRegex = new RegExp(failedTestPattern)
     // nondefaulted fields
     const tags = core.getInput('tags')
 
@@ -209,10 +211,7 @@ async function run() {
 
         const allTags = new Set([...tagsAsArray, ...tagsFromName])
 
-        if (
-          /\(failed\)\.png$/.test(file.path) ||
-          /test-failed/.test(file.path)
-        ) {
+        if (failedTestRegex.test(file.path)) {
           allTags.add('failed')
         }
         if (github.context.eventName === 'pull_request') {
@@ -246,7 +245,8 @@ async function run() {
             metadata: resultJson.metadata,
             error: errorMessage
           })
-        } else if (/\(failed\)\.png$/.test(file.path)) {
+          // @todo make it so i can pass in this as a regex
+        } else if (failedTestRegex.test(file.path)) {
           imageResponses.push(resultJson.data)
         } else if (resultJson.data && resultJson.error) {
           imageResponses.push({
@@ -284,7 +284,8 @@ async function run() {
       await comment({
         token,
         images: imageResponses,
-        commitSha
+        commitSha,
+        failedTestRegex
       })
     } else if (shouldComment && isPullRequest && imageResponses.length === 0) {
       core.warning('No new screenshots found')

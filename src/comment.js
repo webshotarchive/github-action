@@ -43,7 +43,13 @@ const createOrUpdateComment = async (octokit, repo, issue_number, body) => {
   }
 }
 
-const comment = async ({ images, token, message, commitSha }) => {
+const comment = async ({
+  images,
+  token,
+  message,
+  commitSha,
+  failedTestRegex
+}) => {
   try {
     const context = github.context
     const octokit = github.getOctokit(token)
@@ -59,8 +65,7 @@ const comment = async ({ images, token, message, commitSha }) => {
       })
       .map(image => {
         const host = 'https://www.webshotarchive.com'
-        // @todo fix this. make it dynamic, but png is the only supported format for now.
-        const isFailed = /\(failed\)\.png$/.test(image.path)
+        const isFailed = failedTestRegex.test(image.path)
 
         // const extension = getExtension(image.mimetype)
         const url = `${STATIC_IMAGE_HOST}/api/image/id/${image.uniqueId}.png`

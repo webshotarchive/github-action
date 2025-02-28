@@ -48,6 +48,10 @@ inputs:
     description: 'Should the job leave a comment on PR'
     required: false
 
+  failedTestPattern:
+    description: 'Regex pattern for failed tests'
+    required: false
+
   tags:
     description: 'Metadata: tags ["pr"]'
     required: false
