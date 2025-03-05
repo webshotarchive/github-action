@@ -30287,7 +30287,7 @@ const comment = async ({
             link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
           }
           return [
-            `|  ![${image.originalName}](${url})  ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} |![${image.originalName}](${diffUrl})|`,
+            `| ![${image.originalName}](${url})    | ![${image.originalName}](${diffUrl})|`,
             `| ${image.path}                       | ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} |`
           ].join('\n')
         }
