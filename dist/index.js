@@ -30147,15 +30147,16 @@ const createOrUpdateComment = async ({
   clientSecret
 }) => {
   try {
+    const bodyString = JSON.stringify({
+      repo,
+      issueNumber: issue_number,
+      comment: body
+    })
     const response = await fetch(
       `https://api.webshotarchive.com/api/github/actions/comment/${projectId}`,
       {
         method: 'POST',
-        body: JSON.stringify({
-          repo,
-          issueNumber: issue_number,
-          comment: body
-        }),
+        body: bodyString,
         headers: {
           'x-client-id': clientId,
           'x-client-secret': clientSecret
@@ -30167,9 +30168,8 @@ const createOrUpdateComment = async ({
       core.info('Comment created or updated')
     } else {
       core.info('Comment not created or updated')
-      core.info(`repo: ${repo}`)
-      core.info(`issue_number: ${issue_number}`)
-      core.info(`body: ${body}`)
+
+      core.info(`body: ${bodyString}`)
       core.info(`projectId: ${projectId}`)
 
       core.setFailed(`Failed to create or update comment: ${data.message}`)
@@ -30312,7 +30312,7 @@ ${images.length ? table : ''}
     `
 
     await createOrUpdateComment({
-      repo: context.repo,
+      repo: `${context.repo.owner}/${context.repo.repo}`,
       issue_number: context.issue.number,
       body,
       projectId,
