@@ -282,7 +282,6 @@ async function run() {
 
     if (shouldComment && isPullRequest && imageResponses.length) {
       await comment({
-        token,
         images: imageResponses,
         commitSha,
         failedTestRegex

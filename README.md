@@ -28,22 +28,11 @@ side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 
 ## Initial Setup
 
-Prior to installing this action you will need to create a Webshot Archive
-service account with client ID and secret. Follow the instructions on the
-[Webshot Archive Docs](https://docs.webshotarchive.com/docs/tutorial-basics/create-client-credentials)
-to generate these credentials.
+In order for comments on Pull Requests with image diffs, you need to
+[install the Webshot Archive Github Action App](https://github.com/apps/webshot-archive-github-action/installations/new)
+. This will give Webshot Archive `Read and write access to pull requests`.
 
-> [!NOTE]
->
-> You will need to have a paid plan to use this action. Plans start for as
-> little as $5/month and new accounts receive 14 day free trial. I'm a solo
-> developer and the service is not free to me to host and neither is my time.
-> Donate to developer, just trying to have a side project that pays the bills.
->
-> Reach out to me on [Discord](https://discord.gg/u8DEaW9z) if you want to say
-> hello.
-
-Below is an example of how to install this action in a GitHub Actions workflow.
+Below is an example of how to use the this action in a GitHub Actions workflow.
 
 ```yaml
 on:
@@ -51,12 +40,6 @@ on:
     branches:
       - main # or any other branch you want to run this action on
   pull_request: # running on pull_request will use base branch to compare against
-
-permissions:
-  actions: read # required for action to run
-  contents: read
-  issues: write # required for PR comments
-  pull-requests: write # required for PR comments
 
 jobs:
   main:
@@ -67,9 +50,7 @@ jobs:
       # ...
 
       - name: WebshotArchive Action
-        uses: toshimoto821/webshotarchive@v0.0.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: toshimoto821/webshotarchive@v1.0.0
         with:
           screenshotsFolder: dist/cypress # path to where your screenshots are written
           clientId: ${{ secrets.CLIENT_ID }}
