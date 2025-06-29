@@ -30159,7 +30159,8 @@ const createOrUpdateComment = async ({
         body: bodyString,
         headers: {
           'x-client-id': clientId,
-          'x-client-secret': clientSecret
+          'x-client-secret': clientSecret,
+          'Content-Type': 'application/json'
         }
       }
     )
