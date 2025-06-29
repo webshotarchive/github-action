@@ -50,7 +50,7 @@ jobs:
       # ...
 
       - name: WebshotArchive Action
-        uses: toshimoto821/webshotarchive@v1.0.0
+        uses: webshotarchive/github-action@v1.0.0
         with:
           screenshotsFolder: dist/cypress # path to where your screenshots are written
           clientId: ${{ secrets.CLIENT_ID }}
