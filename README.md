@@ -58,8 +58,8 @@ jobs:
           projectId: ${{secrets.PROJECT_ID}}
 ```
 
-Or to just upload images to Webshot Archive and skip comments you may disable
-comments with `comment: false`:
+Or to just upload images to Webshot Archive and skip comments (and not install
+the Github App) you may disable comments with `comment: false`:
 
 ```yaml
    - name: WebshotArchive Action
