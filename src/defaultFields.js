@@ -14,6 +14,7 @@ module.exports.getDefaultCommitSha = () => {
 
 module.exports.getDefaultCompareCommitSha = () => {
   if (github.context.eventName === 'pull_request') {
+    // this is buggy.  the base.sha is not whats on the PR
     return github.context.payload.pull_request.base.sha
   }
   return github.context.payload.before // for push events

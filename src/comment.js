@@ -1,58 +1,47 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
 const STATIC_IMAGE_HOST = 'https://cdn.webshotarchive.dev'
-const COMMENT_IDENTIFIER = '<!-- Timechain Uploaded Images Comment -->'
+const COMMENT_IDENTIFIER = '<!-- Webshot Archive Uploaded Images Comment -->'
 
-const findExistingComment = async (octokit, repo, issue_number) => {
-  const { data: comments } = await octokit.rest.issues.listComments({
-    ...repo,
-    issue_number
-  })
-
-  return comments.find(comment => comment.body.includes(COMMENT_IDENTIFIER))
-}
-
-function getExtension(mimetype) {
-  const mimeToExtension = {
-    'image/jpeg': 'jpg',
-    'image/png': 'png',
-    'image/gif': 'gif',
-    'image/webp': 'webp',
-    'image/svg+xml': 'svg'
-  }
-  return mimeToExtension[mimetype] || 'bin'
-}
-
-const createOrUpdateComment = async (octokit, repo, issue_number, body) => {
-  const existingComment = await findExistingComment(octokit, repo, issue_number)
-
-  if (existingComment) {
-    await octokit.rest.issues.updateComment({
-      ...repo,
-      comment_id: existingComment.id,
-      body
-    })
-    core.debug(`Comment updated: ${existingComment.html_url}`)
-  } else {
-    const { data: comment } = await octokit.rest.issues.createComment({
-      ...repo,
-      issue_number,
-      body
-    })
-    core.debug(`Comment created: ${comment.html_url}`)
+const createOrUpdateComment = async ({
+  repo,
+  issue_number,
+  body,
+  projectId,
+  clientId,
+  clientSecret
+}) => {
+  try {
+    await fetch(
+      `https://api.webshotarchive.com/api/github/actions/comment/${projectId}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          repo,
+          issueNumber: issue_number,
+          comment: body
+        }),
+        headers: {
+          'x-client-id': clientId,
+          'x-client-secret': clientSecret
+        }
+      }
+    )
+  } catch (error) {
+    core.debug(error)
   }
 }
-
 const comment = async ({
   images,
-  token,
   message,
   commitSha,
-  failedTestRegex
+  failedTestRegex,
+  projectId,
+  clientId,
+  clientSecret
 }) => {
   try {
     const context = github.context
-    const octokit = github.getOctokit(token)
 
     const tableRows = images
       .filter((image, index) => {
@@ -67,7 +56,6 @@ const comment = async ({
         const host = 'https://www.webshotarchive.com'
         const isFailed = failedTestRegex.test(image.path)
 
-        // const extension = getExtension(image.mimetype)
         const url = `${STATIC_IMAGE_HOST}/api/image/id/${image.uniqueId}.png`
         const diffUrl = `${STATIC_IMAGE_HOST}/api/image/id/${image.uniqueId}.diff.png`
         if (isFailed) {
@@ -176,14 +164,22 @@ ${images.length ? '## Uploaded Images' : ''}
 ${images.length ? table : ''}
     `
 
-    await createOrUpdateComment(
-      octokit,
-      context.repo,
-      context.issue.number,
-      body
-    )
+    await createOrUpdateComment({
+      repo: context.repo,
+      issue_number: context.issue.number,
+      body,
+      projectId,
+      clientId,
+      clientSecret
+    })
   } catch (error) {
     core.debug(error)
+    core.info(`
+Error: make sure you have the correct permissions on your workflow file;
+permissions:
+  contents: write
+  pull-requests: write
+      `)
     core.setFailed(`Failed to create or update comment: ${error.message}`)
   }
 }
