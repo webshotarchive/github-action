@@ -30167,6 +30167,11 @@ const createOrUpdateComment = async ({
       core.info('Comment created or updated')
     } else {
       core.info('Comment not created or updated')
+      core.info(`repo: ${repo}`)
+      core.info(`issue_number: ${issue_number}`)
+      core.info(`body: ${body}`)
+      core.info(`projectId: ${projectId}`)
+
       core.setFailed(`Failed to create or update comment: ${data.message}`)
     }
   } catch (error) {
