@@ -172,14 +172,6 @@ async function run() {
       throw new Error('screenshotsFolder is required')
     }
 
-    let token
-    if (shouldComment) {
-      token = process.env.GITHUB_TOKEN
-      if (!token) {
-        throw new Error('GITHUB_TOKEN required to comment')
-      }
-    }
-
     core.debug(`isPullRequest: ${isPullRequest}`)
     core.debug(`projectId: ${projectId}`)
     core.debug(`compareCommitSha: ${compareCommitSha}`)
@@ -289,7 +281,6 @@ async function run() {
     } else if (shouldComment && isPullRequest && imageResponses.length === 0) {
       core.warning('No new screenshots found')
       await comment({
-        token,
         images: [],
         message: 'No new screenshots found'
       })

@@ -12,7 +12,7 @@ const createOrUpdateComment = async ({
   clientSecret
 }) => {
   try {
-    await fetch(
+    const response = await fetch(
       `https://api.webshotarchive.com/api/github/actions/comment/${projectId}`,
       {
         method: 'POST',
@@ -27,8 +27,15 @@ const createOrUpdateComment = async ({
         }
       }
     )
+    const data = await response.json()
+    if (data?.status === 200 || data?.status === 201) {
+      core.info('Comment created or updated')
+    } else {
+      core.info('Comment not created or updated')
+      core.setFailed(`Failed to create or update comment: ${data.message}`)
+    }
   } catch (error) {
-    core.debug(error)
+    core.info(error)
   }
 }
 const comment = async ({
