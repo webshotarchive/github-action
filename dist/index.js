@@ -30718,13 +30718,19 @@ async function run() {
       await comment({
         images: imageResponses,
         commitSha,
-        failedTestRegex
+        failedTestRegex,
+        projectId,
+        clientId,
+        clientSecret
       })
     } else if (shouldComment && isPullRequest && imageResponses.length === 0) {
       core.warning('No new screenshots found')
       await comment({
         images: [],
-        message: 'No new screenshots found'
+        message: 'No new screenshots found',
+        projectId,
+        clientId,
+        clientSecret
       })
     }
   } catch (error) {
