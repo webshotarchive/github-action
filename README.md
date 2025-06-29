@@ -50,12 +50,26 @@ jobs:
       # ...
 
       - name: WebshotArchive Action
-        uses: webshotarchive/github-action@v1.0.0
+        uses: webshotarchive/github-action@v1.0.5
         with:
           screenshotsFolder: dist/cypress # path to where your screenshots are written
           clientId: ${{ secrets.CLIENT_ID }}
           clientSecret: ${{ secrets.CLIENT_SECRET }}
           projectId: ${{secrets.PROJECT_ID}}
+```
+
+Or to just upload images to Webshot Archive and skip comments you may disable
+comments with `comment: false`:
+
+```yaml
+   - name: WebshotArchive Action
+        uses: webshotarchive/github-action@v1.0.5
+        with:
+          screenshotsFolder: dist/cypress # path to where your screenshots are written
+          clientId: ${{ secrets.CLIENT_ID }}
+          clientSecret: ${{ secrets.CLIENT_SECRET }}
+          projectId: ${{secrets.PROJECT_ID}}
+          comment: false
 ```
 
 See the [Getting Started](https://docs.webshotarchive.com/docs/intro) docs for
