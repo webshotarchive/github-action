@@ -1,7 +1,7 @@
 # Webshot Archive GitHub Action
 
 [![GitHub Super-Linter](https://github.com/webshotarchive/github-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
-![CI](https://github.com/actions/javascript-action/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/webshotarchive/github-action/actions/workflows/ci.yml/badge.svg)
 
 Use this action to integrate [Webshot Archive](https://www.webshotarchive.com)
 into your GitHub Actions workflow. The action will upload images/screenshots
