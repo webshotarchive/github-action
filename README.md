@@ -1,6 +1,6 @@
 # Webshot Archive GitHub Action
 
-[![GitHub Super-Linter](https://github.com/actions/javascript-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
+[![GitHub Super-Linter](https://github.com/webshotarchive/github-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/actions/javascript-action/actions/workflows/ci.yml/badge.svg)
 
 Use this action to integrate [Webshot Archive](https://www.webshotarchive.com)
@@ -59,7 +59,7 @@ jobs:
 ```
 
 Or to just upload images to Webshot Archive and skip comments (and not install
-the Github App) you may disable comments with `comment: false`:
+the GitHub App) you may disable comments with `comment: false`:
 
 ```yaml
    - name: WebshotArchive Action
