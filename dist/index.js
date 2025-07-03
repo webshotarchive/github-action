@@ -30214,7 +30214,7 @@ const comment = async ({
               </td>
             </tr>
             <tr>
-              <td colspan="2"><img src="${url}" width="350"/></td>
+              <td colspan="2"><img src="${url}" /></td>
             </tr>
             <tr>
               <td colspan="2">
@@ -30264,8 +30264,8 @@ const comment = async ({
             </thead>
           <tbody>
             <tr>
-                <td><img src="${url}" width="350"/></td>
-                <td><img src="${compareSrc}" width="350"/></td>
+                <td><img src="${url}" /></td>
+                <td><img src="${compareSrc}" /></td>
               </tr>
               <tr>
                 <td colspan="2">
@@ -30296,6 +30296,12 @@ const comment = async ({
           </tbody>
           </table>`
         } else if (!image.diffCount) {
+          const queryParams = [
+            'showDuplicates=true',
+            `filterCommit=${post}`
+          ].join('&')
+          const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
+          const link = `<a href="${webshotUrl}">Webshot Archive ${post}</a>`
           return `<table>
           <!-- New image -->
             <thead>
@@ -30313,7 +30319,7 @@ const comment = async ({
                 <td colspan="2">
                   <sub>
                     <b>${path}</b><br>
-                    <b>Status:</b> <span style="color: #28a745;">New image</span>
+                    ${link}
                   </sub>
                 </td>
               </tr>
@@ -30355,8 +30361,8 @@ const comment = async ({
               </thead>
               <tbody>
                 <tr>
-                  <td><img src="${url}" width="350"/></td>
-                  <td><img src="${diffUrl}" width="350"/></td>
+                  <td><img src="${url}" /></td>
+                  <td><img src="${diffUrl}" /></td>
                 </tr>
               <tr>
                 <td colspan="2">
