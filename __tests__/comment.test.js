@@ -47,7 +47,10 @@ describe('comment', () => {
         diffCommitSha: '22325935ad59e1853891831fdbd6982d32808703',
         path: 'dist/playwright/api-api-tags--tutorial--chromium/api.png',
         compareImageTimestamp: '2025-01-01T00:00:00Z',
-        createdAt: '2025-01-01T00:00:00Z'
+        createdAt: '2025-01-01T00:00:00Z',
+        metadata: {
+          compareImage: true
+        }
       },
       {
         uniqueId: 'f107b232-ba2e-4a3c-90e6-0e5cf6a48a14',
@@ -56,7 +59,10 @@ describe('comment', () => {
         diffCommitSha: '22325935ad59e1853891831fdbd6982d32808703',
         path: 'dist/playwright/api-api-tags--tutorial--chromium/api.png',
         compareImageTimestamp: '2025-01-01T00:00:00Z',
-        createdAt: '2025-01-01T00:00:00Z'
+        createdAt: '2025-01-01T00:00:00Z',
+        metadata: {
+          compareImage: true
+        }
       },
       // new image
       {
@@ -77,7 +83,10 @@ describe('comment', () => {
         path: 'dist/playwright/api-api-tags--tutorial--chromium/api.png',
         compareImageTimestamp: '2025-01-01T00:00:00Z',
         createdAt: '2025-01-01T00:00:00Z',
-        error: 'Error'
+        metadata: {
+          compareImage: true
+        },
+        error: 'Image sizes'
       }
     ]
 

@@ -30226,10 +30226,26 @@ const comment = async ({
           link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
         }
 
+        if (image.metadata?.compareImage) {
+          return `<!-- compare image --><tr>
+          <td><img src="${url}" width="350"/></td>
+          <td><img src="${diffUrl}" width="350"/></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <sub>
+              ${image.error ? `<b>Error:</b> ${image.error}<br>` : ''}<b>${path}</b><br>
+              <b>Diff:</b> ${diffPx}px<br>
+              <b>Commit:</b> ${commit}<br>
+              ${link}
+            </sub>
+          </td>
+        </tr>`
+        }
+
         // Failed case
         if (failedTestRegex.test(image.path)) {
-          return `
-            <tr>
+          return `<!--failed test --><tr>
               <td colspan="2"><img src="${url}" width="350"/></td>
             </tr>
             <tr>
@@ -30239,13 +30255,12 @@ const comment = async ({
                   <b>Status:</b> <span style="color: #d73a49;">Failed test</span>
                 </sub>
               </td>
-            </tr>
-          `
+            </tr>`
         }
 
         // New image (no diff)
         if (!image.diffCount) {
-          return `<tr>
+          return `<!-- New image --><tr>
               <td colspan="2"><img src="${url}" /></td>
             </tr>
             <tr>
@@ -30259,20 +30274,7 @@ const comment = async ({
         }
 
         // Diff case
-        return `<tr>
-            <td><img src="${url}" width="350"/></td>
-            <td><img src="${diffUrl}" width="350"/></td>
-          </tr>
-          <tr>
-            <td colspan="2">
-              <sub>
-                ${image.error ? `<b>Error:</b> ${image.error}<br>` : ''}<b>${path}</b><br>
-                <b>Diff:</b> ${diffPx}px<br>
-                <b>Commit:</b> ${commit}<br>
-                ${link}
-              </sub>
-            </td>
-          </tr>`
+        return `<!-- no diff found for ${path} -->`
       }).join(`
         <tr style="height: 10px; background-color: #f6f8fa;">
           <td colspan="2"></td>
