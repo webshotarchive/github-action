@@ -71,17 +71,25 @@ const comment = async ({
 
         // Failed case
         if (failedTestRegex.test(image.path)) {
-          return `<!--failed test --><tr>
+          return `<table>
+          <!--failed test -->
+            <tr>
+              <td colspan="2">
+                <b>Failed test</b>
+              </td>
+            </tr>
+            <tr>
               <td colspan="2"><img src="${url}" width="350"/></td>
             </tr>
             <tr>
               <td colspan="2">
                 <sub>
-                  <b>${path}</b><br>
+                  <b>Path: </b>${path}
                   <b>Status:</b> <span style="color: #d73a49;">Failed test</span>
                 </sub>
               </td>
-            </tr>`
+            </tr>
+          </table>`
         } else if (image.originalName && image.error) {
           const compareImage = image.metadata?.compareImage
           let link = ''
@@ -107,37 +115,75 @@ const comment = async ({
           link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
           const compareSrc = `${STATIC_IMAGE_HOST}/api/image/id/${compareImage}.png`
 
-          return `<!-- compare image with error--><tr>
-              <td><img src="${url}" width="350"/></td>
-              <td><img src="${compareSrc}" width="350"/></td>
-            </tr>
+          return `<table>
+          <!-- compare image with error-->
+            <thead>
+              <tr>
+                <td>
+                  <b>Current Snapshot</b>
+                </td>
+                <td>
+                  <b>Previous Snapshot</b>
+                </td>
+              </tr>
+            </thead>
+          <tbody>
             <tr>
-              <td colspan="2">
-                <sub>
-                  <b>${path}</b><br>  
-                  <b>Error:</b> ${image.error}<br>
-                  <b>Diff:</b> ${diffPx}px<br>
-                  <b>Commit:</b> ${commit}<br>
-                  ${link}
-                </sub>
-              </td>
-            </tr>`
+                <td><img src="${url}" width="350"/></td>
+                <td><img src="${compareSrc}" width="350"/></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <sub>
+                    <b>${path}</b><br>  
+                    <b>Error:</b> ${image.error}<br>
+                    <b>Commit:</b> ${commit}<br>
+                    ${link}
+                  </sub>
+                </td>
+              </tr>
+            </tbody>
+          </table>`
         } else if (image.error) {
-          return `<!-- compare image with error--><tr>
-          <td colspan="2">${image.error}</td>
-          </tr>`
-        } else if (!image.diffCount) {
-          return `<!-- New image --><tr>
-              <td colspan="2"><img src="${url}" /></td>
-            </tr>
+          return `<table>
+          <!-- compare image with error-->
+          <thead>
             <tr>
               <td colspan="2">
-                <sub>
-                  <b>${path}</b><br>
-                  <b>Status:</b> <span style="color: #28a745;">New image</span>
-                </sub>
+                <b>Error</b>
               </td>
-            </tr>`
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="2">${image.error}</td>
+            </tr>
+          </tbody>
+          </table>`
+        } else if (!image.diffCount) {
+          return `<table>
+          <!-- New image -->
+            <thead>
+              <tr>
+                <td colspan="2">
+                  <b>New image</b>
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="2"><img src="${url}" /></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <sub>
+                    <b>${path}</b><br>
+                    <b>Status:</b> <span style="color: #28a745;">New image</span>
+                  </sub>
+                </td>
+              </tr>
+            </tbody>
+          </table>`
         } else if (image.diffCount > 0) {
           let link = ''
           if (image.diffCommitSha && commitSha) {
@@ -160,39 +206,43 @@ const comment = async ({
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
             link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
 
-            return `<!-- diff found for ${path} --><tr>
-              <td><img src="${url}" width="350"/></td>
-              <td><img src="${diffUrl}" width="350"/></td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <sub>
-                  <b>${path}</b><br>
-                  <b>Diff:</b> ${diffPx}px<br>
-                  <b>Commit:</b> ${commit}<br>
-                  ${link}
-                </sub>
-              </td>
-            </tr>`
+            return `<table>
+            <!-- diff found for ${path} -->
+              <thead>
+                <tr>
+                  <td>
+                    <b>Current Snapshot</b>
+                  </td>
+                  <td>
+                    <b>Diff</b>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><img src="${url}" width="350"/></td>
+                  <td><img src="${diffUrl}" width="350"/></td>
+                </tr>
+              <tr>
+                <td colspan="2">
+                  <sub>
+                    <b>${path}</b><br>
+                    <b>Diff:</b> ${diffPx}px<br>
+                    <b>Commit:</b> ${commit}<br>
+                    ${link}
+                  </sub>
+                </td>
+              </tr>
+              </tbody>
+            </table>`
           }
         }
 
         // Diff case
         return `<!-- no diff found for ${path} -->`
-      }).join(`
-        <tr style="height: 10px; background-color: #f6f8fa;">
-          <td colspan="2"></td>
-        </tr>
-      `)
-    const table = `
-<table>
-  <tr>
-    <th>Image</th>
-    <th>Diff</th>
-  </tr>
-  ${tableRows}
-</table>
-    `
+      })
+      .join('\n')
+    const table = tableRows
 
     const body = `
 ${COMMENT_IDENTIFIER}
