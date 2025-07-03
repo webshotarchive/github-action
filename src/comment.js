@@ -69,45 +69,6 @@ const comment = async ({
         const pre = image.diffCommitSha?.substring(0, 10) || ''
         const host = 'https://www.webshotarchive.com'
 
-        // Build link for diffs
-        let link = ''
-        if (image.diffCommitSha && commitSha) {
-          const encodedPath = image.path
-            .split('/')
-            .map(encodeURIComponent)
-            .join('/')
-          const compareImageTimestamp = image.compareImageTimestamp
-            ? new Date(image.compareImageTimestamp).toISOString().split('T')[0]
-            : null
-          const [createdAt] = new Date(image.createdAt).toISOString().split('T')
-          const queryParams = [
-            'showDuplicates=true',
-            `filterCommit=${post}%2C${pre}`,
-            'addToCompare=true',
-            `startDate=${compareImageTimestamp || createdAt}`,
-            `endDate=${createdAt}`
-          ].join('&')
-          const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${encodedPath}?${queryParams}`
-          link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
-        }
-
-        if (image.metadata?.compareImage) {
-          return `<!-- compare image --><tr>
-          <td><img src="${url}" width="350"/></td>
-          <td><img src="${diffUrl}" width="350"/></td>
-        </tr>
-        <tr>
-          <td colspan="2">
-            <sub>
-              ${image.error ? `<b>Error:</b> ${image.error}<br>` : ''}<b>${path}</b><br>
-              <b>Diff:</b> ${diffPx}px<br>
-              <b>Commit:</b> ${commit}<br>
-              ${link}
-            </sub>
-          </td>
-        </tr>`
-        }
-
         // Failed case
         if (failedTestRegex.test(image.path)) {
           return `<!--failed test --><tr>
@@ -121,10 +82,51 @@ const comment = async ({
                 </sub>
               </td>
             </tr>`
-        }
+        } else if (image.originalName && image.error) {
+          const compareImage = image.metadata?.compareImage
+          let link = ''
 
-        // New image (no diff)
-        if (!image.diffCount) {
+          const compareImageTimestamp = image.metadata?.compareImageTimestamp
+            ? new Date(image.metadata?.compareImageTimestamp)
+                .toISOString()
+                .split('T')[0]
+            : null
+          core.debug(`path: ${path}`)
+          core.debug(`compareImageTimestamp: ${compareImageTimestamp}`)
+          const [createdAt] = new Date(image.createdAt).toISOString().split('T')
+          core.debug(`createdAt: ${createdAt}`)
+          const queryParams = [
+            'showDuplicates=true',
+            `filterCommit=${post}%2C${pre}`,
+            'addToCompare=true',
+            `startDate=${compareImageTimestamp || createdAt}`,
+            `endDate=${createdAt}`,
+            'imageSelectView=square'
+          ].join('&')
+          const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
+          link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
+          const compareSrc = `${STATIC_IMAGE_HOST}/api/image/id/${compareImage}.png`
+
+          return `<!-- compare image with error--><tr>
+              <td><img src="${url}" width="350"/></td>
+              <td><img src="${compareSrc}" width="350"/></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <sub>
+                  <b>${path}</b><br>  
+                  <b>Error:</b> ${image.error}<br>
+                  <b>Diff:</b> ${diffPx}px<br>
+                  <b>Commit:</b> ${commit}<br>
+                  ${link}
+                </sub>
+              </td>
+            </tr>`
+        } else if (image.error) {
+          return `<!-- compare image with error--><tr>
+          <td colspan="2">${image.error}</td>
+          </tr>`
+        } else if (!image.diffCount) {
           return `<!-- New image --><tr>
               <td colspan="2"><img src="${url}" /></td>
             </tr>
@@ -136,6 +138,43 @@ const comment = async ({
                 </sub>
               </td>
             </tr>`
+        } else if (image.diffCount > 0) {
+          let link = ''
+          if (image.diffCommitSha && commitSha) {
+            const compareImageTimestamp = image.compareImageTimestamp
+              ? new Date(image.compareImageTimestamp)
+                  .toISOString()
+                  .split('T')[0]
+              : null
+            const [createdAt] = new Date(image.createdAt)
+              .toISOString()
+              .split('T')
+
+            const queryParams = [
+              'showDuplicates=true',
+              `filterCommit=${post}%2C${pre}`,
+              'addToCompare=true',
+              `startDate=${compareImageTimestamp || createdAt}`,
+              `endDate=${createdAt}`
+            ].join('&')
+            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
+            link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
+
+            return `<!-- diff found for ${path} --><tr>
+              <td><img src="${url}" width="350"/></td>
+              <td><img src="${diffUrl}" width="350"/></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <sub>
+                  <b>${path}</b><br>
+                  <b>Diff:</b> ${diffPx}px<br>
+                  <b>Commit:</b> ${commit}<br>
+                  ${link}
+                </sub>
+              </td>
+            </tr>`
+          }
         }
 
         // Diff case

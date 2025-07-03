@@ -78,13 +78,13 @@ describe('comment', () => {
       {
         uniqueId: 'f107b232-ba2e-4a3c-90e6-0e5cf6a48a14',
         originalName: 'foo.png',
-        diffCount: 55,
+        diffCount: undefined,
         diffCommitSha: '22325935ad59e1853891831fdbd6982d32808703',
         path: 'dist/playwright/api-api-tags--tutorial--chromium/api.png',
         compareImageTimestamp: '2025-01-01T00:00:00Z',
         createdAt: '2025-01-01T00:00:00Z',
         metadata: {
-          compareImage: true
+          compareImage: 'f107b232-ba2e-4a3c-90e6-0e5cf6a48a14'
         },
         error: 'Image sizes'
       }
