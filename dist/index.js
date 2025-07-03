@@ -30183,7 +30183,7 @@ const comment = async ({
   images,
   message,
   commitSha,
-  failedTestRegex,
+  failedTestRegex = /failed/,
   projectId,
   clientId,
   clientSecret
@@ -30192,115 +30192,100 @@ const comment = async ({
     const context = github.context
 
     const tableRows = images
-      .filter((image, index) => {
-        const hasImage = !!image
-
-        if (!hasImage) {
-          core.debug(`No image found at index ${index}`)
-        }
-        return hasImage
-      })
+      .filter(image => !!image)
       .map(image => {
-        const host = 'https://www.webshotarchive.com'
-        const isFailed = failedTestRegex.test(image.path)
-
         const url = `${STATIC_IMAGE_HOST}/api/image/id/${image.uniqueId}.png`
         const diffUrl = `${STATIC_IMAGE_HOST}/api/image/id/${image.uniqueId}.diff.png`
-        if (isFailed) {
-          return [
-            `| ![${image.originalName}](${url}) |         |`,
-            `| (failed)                         |         |`
-          ].join('\n')
-        } else if (image.originalName && image.error) {
-          const compareImage = image.metadata?.compareImage
-          if (compareImage) {
-            let link = ''
-            const path = image.path.split('/').map(encodeURIComponent).join('/')
-            const post = commitSha.substring(0, 10)
-            const pre = (image.metadata?.compareCommitSha || '').substring(
-              0,
-              10
-            )
+        const path = image.path
+        const name = image.originalName
+        const diffPx = image.diffCount || 0
+        const commit = image.diffCommitSha?.substring(0, 10) || ''
+        const post = commitSha?.substring(0, 10) || ''
+        const pre = image.diffCommitSha?.substring(0, 10) || ''
+        const host = 'https://www.webshotarchive.com'
 
-            const compareImageTimestamp = image.metadata?.compareImageTimestamp
-              ? new Date(image.metadata?.compareImageTimestamp)
-                  .toISOString()
-                  .split('T')[0]
-              : null
-            core.debug(`path: ${path}`)
-            core.debug(`compareImageTimestamp: ${compareImageTimestamp}`)
-            const [createdAt] = new Date(image.createdAt)
-              .toISOString()
-              .split('T')
-            core.debug(`createdAt: ${createdAt}`)
-            const queryParams = [
-              'showDuplicates=true',
-              `filterCommit=${post}%2C${pre}`,
-              'addToCompare=true',
-              `startDate=${compareImageTimestamp || createdAt}`,
-              `endDate=${createdAt}`,
-              'imageSelectView=square'
-            ].join('&')
-            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
-            link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
-            const compareSrc = `${STATIC_IMAGE_HOST}/api/image/id/${compareImage}.png`
-            const diffCommitSha = (
-              image?.metadata?.compareCommitSha || ''
-            ).substring(0, 10)
-            return [
-              `| ![${image.originalName}](${url})    | ![${image.originalName}](${compareSrc}) |`,
-              `| ${image.path}                       | ${image.error} ${diffCommitSha} / ${link} |`
-            ].join('\n')
-          }
-          return `| ![${image.originalName}](${url}) ${image.originalName}| ${image.error}|`
-        } else if (image.error) {
-          return `| Error: | ${image.error}|`
-        } else if (!image.diffCount) {
-          return [
-            `| ![${image.originalName}](${url}) ${image.originalName} | |`,
-            `| (new)                                                  | |`
-          ].join('\n')
-        } else if (image.diffCount > 0) {
-          // const url = `${host}/project/dashboard/${image.projectId}/blob/${image.path}?showDuplicates=true&filterCommit=${compareCommitSha},${commitSha}&addToCompare=true`
-          let link = ''
-          if (image.diffCommitSha && commitSha) {
-            const path = image.path.split('/').map(encodeURIComponent).join('/')
-            const pre = image.diffCommitSha.substring(0, 10)
-            const post = commitSha.substring(0, 10)
-
-            const compareImageTimestamp = image.compareImageTimestamp
-              ? new Date(image.compareImageTimestamp)
-                  .toISOString()
-                  .split('T')[0]
-              : null
-            const [createdAt] = new Date(image.createdAt)
-              .toISOString()
-              .split('T')
-
-            const queryParams = [
-              'showDuplicates=true',
-              `filterCommit=${post}%2C${pre}`,
-              'addToCompare=true',
-              `startDate=${compareImageTimestamp || createdAt}`,
-              `endDate=${createdAt}`
-            ].join('&')
-            const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
-            link = `[Webshot Archive ${post}...${pre}](${webshotUrl})`
-          }
-          return [
-            `| ![${image.originalName}](${url})    | ![${image.originalName}](${diffUrl})|`,
-            `| ${image.path}                       | ${image.diffCount}px / ${image.diffCommitSha?.substring(0, 10)} / ${link} |`
-          ].join('\n')
+        // Build link for diffs
+        let link = ''
+        if (image.diffCommitSha && commitSha) {
+          const encodedPath = image.path
+            .split('/')
+            .map(encodeURIComponent)
+            .join('/')
+          const compareImageTimestamp = image.compareImageTimestamp
+            ? new Date(image.compareImageTimestamp).toISOString().split('T')[0]
+            : null
+          const [createdAt] = new Date(image.createdAt).toISOString().split('T')
+          const queryParams = [
+            'showDuplicates=true',
+            `filterCommit=${post}%2C${pre}`,
+            'addToCompare=true',
+            `startDate=${compareImageTimestamp || createdAt}`,
+            `endDate=${createdAt}`
+          ].join('&')
+          const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${encodedPath}?${queryParams}`
+          link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
         }
-        core.debug(`Unknown image: ${image.originalName}`)
-        return ''
-      })
-      .join('\n')
 
+        // Failed case
+        if (failedTestRegex.test(image.path)) {
+          return `
+            <tr>
+              <td colspan="2"><img src="${url}" width="350"/></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <sub>
+                  <b>${path}</b><br>
+                  <b>Status:</b> <span style="color: #d73a49;">Failed test</span>
+                </sub>
+              </td>
+            </tr>
+          `
+        }
+
+        // New image (no diff)
+        if (!image.diffCount) {
+          return `<tr>
+              <td colspan="2"><img src="${url}" /></td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <sub>
+                  <b>${path}</b><br>
+                  <b>Status:</b> <span style="color: #28a745;">New image</span>
+                </sub>
+              </td>
+            </tr>`
+        }
+
+        // Diff case
+        return `<tr>
+            <td><img src="${url}" width="350"/></td>
+            <td><img src="${diffUrl}" width="350"/></td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <sub>
+                ${image.error ? `<b>Error:</b> ${image.error}<br>` : ''}<b>${path}</b><br>
+                <b>Diff:</b> ${diffPx}px<br>
+                <b>Commit:</b> ${commit}<br>
+                ${link}
+              </sub>
+            </td>
+          </tr>`
+      }).join(`
+        <tr style="height: 10px; background-color: #f6f8fa;">
+          <td colspan="2"></td>
+        </tr>
+      `)
     const table = `
-| Image |  Diff |
-| ----- | ----- |
-${tableRows}
+<table>
+  <tr>
+    <th>Image</th>
+    <th>Diff</th>
+  </tr>
+  ${tableRows}
+</table>
     `
 
     const body = `
@@ -30320,6 +30305,7 @@ ${images.length ? table : ''}
       clientId,
       clientSecret
     })
+    return body
   } catch (error) {
     core.debug(error)
     core.info(`
@@ -30332,7 +30318,7 @@ permissions:
   }
 }
 
-module.exports = { comment }
+module.exports = { comment, createOrUpdateComment }
 
 
 /***/ }),
