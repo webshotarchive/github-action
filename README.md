@@ -29,7 +29,7 @@ side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
 ## Initial Setup
 
 In order for comments on Pull Requests with image diffs, you need to
-[install the Webshot Archive Github Action App](https://github.com/apps/webshot-archive-github-action/installations/new)
+[install the Webshot Archive GitHub Action App](https://github.com/apps/webshot-archive-github-action/installations/new)
 . This will give Webshot Archive `Read and write access to pull requests`.
 
 Below is an example of how to use the this action in a GitHub Actions workflow.
@@ -111,7 +111,7 @@ The action supports the following paramets to `with:`
 
 ## Need Help?
 
-- [Discord](https://discord.gg/u8DEaW9z) - say hi and ask questions.
+- [Discord](https://discord.gg/a9qkpVxPnF) - say hi and ask questions.
 - [Webshot Archive Docs](https://docs.webshotarchive.com) - API Details,
   tutorials, recipes, and blog posts.
 - [Create an Issue](https://github.com/webshotarchive/github-action/issues/new) -
