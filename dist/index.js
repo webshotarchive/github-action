@@ -30666,6 +30666,11 @@ async function run() {
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
+
+        if (resultJson.message) {
+          core.info(`${file.name}: ${resultJson.message}`)
+        }
+
         let errorMessage = ''
         if (resultJson.error || resultJson.statusCode === 400) {
           errorMessage =
