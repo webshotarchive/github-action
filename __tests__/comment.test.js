@@ -48,6 +48,7 @@ describe('comment', () => {
         path: 'dist/playwright/api-api-tags--tutorial--chromium/api.png',
         compareImageTimestamp: '2025-01-01T00:00:00Z',
         createdAt: '2025-01-01T00:00:00Z',
+        tags: ['api', 'tutorial', 'chromium'],
         metadata: {
           compareImage: true
         }

@@ -30203,6 +30203,7 @@ const comment = async ({
         const post = commitSha?.substring(0, 10) || ''
         const pre = image.diffCommitSha?.substring(0, 10) || ''
         const host = 'https://www.webshotarchive.com'
+        const tags = image.tags || []
 
         // Failed case
         if (failedTestRegex.test(image.path)) {
@@ -30219,8 +30220,10 @@ const comment = async ({
             <tr>
               <td colspan="2">
                 <sub>
-                  <b>Path: </b>${path}
-                  <b>Status:</b> <span style="color: #d73a49;">Failed test</span>
+                  <b>Path: </b>${path}<br>
+                  <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
+                  <b>Status:</b> <span style="color: #d73a49;">Failed test</span><br>
+                  <b>Commit:</b> ${commit}<br>
                 </sub>
               </td>
             </tr>
@@ -30264,15 +30267,16 @@ const comment = async ({
             </thead>
           <tbody>
             <tr>
-                <td><img src="${url}" /></td>
-                <td><img src="${compareSrc}" /></td>
+                <td><img src="${url}" width="365" /></td>
+                <td><img src="${compareSrc}" width="365" /></td>
               </tr>
               <tr>
                 <td colspan="2">
                   <sub>
                     <b>${path}</b><br>  
-                    <b>Error:</b> ${image.error}<br>
+                    <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
                     <b>Commit:</b> ${commit}<br>
+                    <b>Error:</b> ${image.error}<br>
                     ${link}
                   </sub>
                 </td>
@@ -30320,6 +30324,8 @@ const comment = async ({
                 <td colspan="2">
                   <sub>
                     <b>${path}</b><br>
+                    <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
+                    <b>Commit:</b> ${commit}<br>
                     ${link}
                   </sub>
                 </td>
@@ -30362,14 +30368,15 @@ const comment = async ({
               </thead>
               <tbody>
                 <tr>
-                  <td><img src="${url}" /></td>
-                  <td><img src="${diffUrl}" /></td>
+                  <td><img src="${url}" width="365" /></td>
+                  <td><img src="${diffUrl}" width="365" /></td>
                 </tr>
               <tr>
                 <td colspan="2">
                   <sub>
                     <b>${path}</b><br>
-                    <b>Diff:</b> ${diffPx}px<br>
+                    <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
+                    <b>Pixel Difference:</b> ${diffPx}px<br>
                     <b>Commit:</b> ${commit}<br>
                     ${link}
                   </sub>
