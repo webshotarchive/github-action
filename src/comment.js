@@ -88,7 +88,7 @@ const comment = async ({
                   <b>Path: </b>${path}<br>
                   <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
                   <b>Status:</b> <span style="color: #d73a49;">Failed test</span><br>
-                  <b>Commit:</b> ${commit}<br>
+                  <b>Diff Commit:</b> ${commit}<br>
                 </sub>
               </td>
             </tr>
@@ -131,7 +131,7 @@ const comment = async ({
                   <sub>
                     <b>${path}</b><br>  
                     <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
-                    <b>Commit:</b> ${commit}<br>
+                    <b>Diff Commit:</b> ${commit}<br>
                     <b>Error:</b> ${image.error}<br>
                     ${link}
                   </sub>
@@ -181,7 +181,7 @@ const comment = async ({
                   <sub>
                     <b>${path}</b><br>
                     <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
-                    <b>Commit:</b> ${commit}<br>
+                    <b>Diff Commit:</b> ${commit}<br>
                     ${link}
                   </sub>
                 </td>
@@ -222,7 +222,7 @@ const comment = async ({
                     <b>${path}</b><br>
                     <b>Tags:</b> ${tags.map(tag => `<code>${tag}</code>`).join(', ')}<br>
                     <b>Pixel Difference:</b> ${diffPx}px<br>
-                    <b>Commit:</b> ${commit}<br>
+                    <b>Diff Commit:</b> ${commit}<br>
                     ${link}
                   </sub>
                 </td>
