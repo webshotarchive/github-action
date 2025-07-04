@@ -163,7 +163,8 @@ const comment = async ({
         } else if (!image.diffCount) {
           const queryParams = [
             'showDuplicates=true',
-            `filterCommit=${post}`
+            `filterCommit=${post}`,
+            'addToCompare=true'
           ].join('&')
           const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
           const link = `<a href="${webshotUrl}">Webshot Archive ${post}</a>`
