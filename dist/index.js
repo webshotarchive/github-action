@@ -30232,21 +30232,12 @@ const comment = async ({
           const compareImage = image.metadata?.compareImage
           let link = ''
 
-          const compareImageTimestamp = image.metadata?.compareImageTimestamp
-            ? new Date(image.metadata?.compareImageTimestamp)
-                .toISOString()
-                .split('T')[0]
-            : null
           core.debug(`path: ${path}`)
-          core.debug(`compareImageTimestamp: ${compareImageTimestamp}`)
-          const [createdAt] = new Date(image.createdAt).toISOString().split('T')
-          core.debug(`createdAt: ${createdAt}`)
+
           const queryParams = [
             'showDuplicates=true',
             `filterCommit=${post}%2C${pre}`,
             'addToCompare=true',
-            `startDate=${compareImageTimestamp || createdAt}`,
-            `endDate=${createdAt}`,
             'imageSelectView=square'
           ].join('&')
           const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
@@ -30335,21 +30326,10 @@ const comment = async ({
         } else if (image.diffCount > 0) {
           let link = ''
           if (image.diffCommitSha && commitSha) {
-            const compareImageTimestamp = image.compareImageTimestamp
-              ? new Date(image.compareImageTimestamp)
-                  .toISOString()
-                  .split('T')[0]
-              : null
-            const [createdAt] = new Date(image.createdAt)
-              .toISOString()
-              .split('T')
-
             const queryParams = [
               'showDuplicates=true',
               `filterCommit=${post}%2C${pre}`,
-              'addToCompare=true',
-              `startDate=${compareImageTimestamp || createdAt}`,
-              `endDate=${createdAt}`
+              'addToCompare=true'
             ].join('&')
             const webshotUrl = `${host}/project/dashboard/${image.project}/blob/${path}?${queryParams}`
             link = `<a href="${webshotUrl}">Webshot Archive ${post}...${pre}</a>`
