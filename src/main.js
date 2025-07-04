@@ -228,7 +228,7 @@ async function run() {
           if (resultJson.message.includes('Image uploaded successfully')) {
             core.info(`✅ ${file.name}: ${resultJson.message}`)
           } else {
-            core.info(`❌ ${file.name}: ${resultJson.message}`)
+            core.info(`ℹ️ ${file.name}: ${resultJson.message}`)
           }
         }
 
