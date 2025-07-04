@@ -236,7 +236,9 @@ async function run() {
         if (resultJson.error || resultJson.statusCode === 400) {
           errorMessage =
             resultJson.error || resultJson.message || 'unknown error'
-          core.warning(`Error uploading ${file.name}: ${errorMessage}`)
+          core.info(
+            `${resultJson.statusCode >= 400 ? '❌' : 'ℹ️'} ${file.name}: ${errorMessage}`
+          )
         }
         // only push if the response has changed if compareCommitSha is provided
         // or the image is failed
