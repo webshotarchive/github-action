@@ -30759,7 +30759,11 @@ async function run() {
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
 
         if (resultJson.message) {
-          core.info(`${file.name}: ${resultJson.message}`)
+          if (resultJson.message.includes('Image uploaded successfully')) {
+            core.info(`✅ ${file.name}: ${resultJson.message}`)
+          } else {
+            core.info(`❌ ${file.name}: ${resultJson.message}`)
+          }
         }
 
         let errorMessage = ''
