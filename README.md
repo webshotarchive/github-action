@@ -50,7 +50,7 @@ jobs:
       # ...
 
       - name: WebshotArchive Action
-        uses: webshotarchive/github-action@v1.0.5
+        uses: webshotarchive/github-action@latest
         with:
           screenshotsFolder: dist/cypress # path to where your screenshots are written
           clientId: ${{ secrets.CLIENT_ID }}
@@ -63,7 +63,7 @@ the GitHub App) you may disable comments with `comment: false`:
 
 ```yaml
    - name: WebshotArchive Action
-        uses: webshotarchive/github-action@v1.0.5
+        uses: webshotarchive/github-action@latest
         with:
           screenshotsFolder: dist/cypress # path to where your screenshots are written
           clientId: ${{ secrets.CLIENT_ID }}
