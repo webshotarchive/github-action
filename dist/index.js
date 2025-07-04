@@ -30258,8 +30258,8 @@ const comment = async ({
             </thead>
           <tbody>
             <tr>
-                <td><img src="${url}" width="365" /></td>
-                <td><img src="${compareSrc}" width="365" /></td>
+                <td valign="top"><img src="${url}" width="365" /></td>
+                <td valign="top"><img src="${compareSrc}" width="365" /></td>
               </tr>
               <tr>
                 <td colspan="2">
@@ -30309,7 +30309,7 @@ const comment = async ({
             </thead>
             <tbody>
               <tr>
-                <td colspan="2"><img src="${url}" /></td>
+                <td colspan="2" valign="top"><img src="${url}" /></td>
               </tr>
               <tr>
                 <td colspan="2">
@@ -30348,8 +30348,8 @@ const comment = async ({
               </thead>
               <tbody>
                 <tr>
-                  <td><img src="${url}" width="365" /></td>
-                  <td><img src="${diffUrl}" width="365" /></td>
+                  <td valign="top"><img src="${url}" width="365" /></td>
+                  <td valign="top"><img src="${diffUrl}" width="365" /></td>
                 </tr>
               <tr>
                 <td colspan="2">
