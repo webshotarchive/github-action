@@ -33,9 +33,9 @@ review.
 
 1. **Sign up** for a [Webshot Archive account](https://www.webshotarchive.com)
    (freemium available)
-2. **Create client credentials** by following the
+1. **Create client credentials** by following the
    [setup guide](https://docs.webshotarchive.com/docs/tutorial-basics/create-client-credentials)
-3. **Add credentials** to your GitHub repository secrets:
+1. **Add credentials** to your GitHub repository secrets:
    - `CLIENT_ID` - Your Webshot Archive client ID
    - `CLIENT_SECRET` - Your Webshot Archive client secret
    - `PROJECT_ID` - Your Webshot Archive project ID
@@ -166,7 +166,7 @@ jobs:
 
 ## 🔗 Resources
 
-- **[Webshot Archive](https://www.webshotarchive.com)** - Main website
+- **[Webshot Archive](https://www.webshotarchive.com)** - Main site
 - **[Documentation](https://docs.webshotarchive.com/)** - Complete docs
 - **[GitHub Repository](https://github.com/webshotarchive/github-action)** -
   Source code
