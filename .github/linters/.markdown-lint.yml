@@ -24,3 +24,6 @@ MD013:
   heading_line_length: 80
   code_block_line_length: 80
   strict: false
+
+# Disable inline HTML rule
+MD033: false

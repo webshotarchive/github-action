@@ -2,117 +2,191 @@
 
 [![GitHub Super-Linter](https://github.com/webshotarchive/github-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/webshotarchive/github-action/actions/workflows/ci.yml/badge.svg)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Use this action to integrate [Webshot Archive](https://www.webshotarchive.com)
-into your GitHub Actions workflow. The action will upload images/screenshots
-from your CI test runner to Webshot Archive. For actions that run on
-`pull_request` events, the action will also comment on the PR with any
-differences between the current branch and the target branch.
+> **Automate visual regression testing in your GitHub Actions workflow**
 
-Integrates with GitHub Actions to comment on PRs with any differences between
-the current branch and the target branch.
+The Webshot Archive GitHub Action seamlessly integrates
+[Webshot Archive](https://www.webshotarchive.com) into your CI/CD pipeline.
+Upload screenshots from your test runner and automatically detect visual
+differences between branches, with intelligent PR commenting for effortless code
+review.
 
-![Comment on PR](./docs/assets/pixel-comment.png)
+## ✨ Features
 
-Use the Webshot Archive UI to view all screenshots and compare them side by
-side. ![Webshot Archive UI](./docs/assets/pixel-ui.png)
+- 🔄 **Automatic Screenshot Upload**: Upload test screenshots directly from your
+  CI runner
+- 📊 **Visual Diff Detection**: Compare screenshots between branches
+  automatically
+- 💬 **Smart PR Comments**: Get detailed visual diff reports in your pull
+  requests
+- 🏷️ **Tagged Screenshots**: Automatic tagging for failed tests and custom
+  categories
+- 🔧 **Flexible Configuration**: Support for both push and pull request
+  workflows
+- 🎯 **Configurable Noise Control**: Adjustable thresholds to minimize false
+  positives and handle visual noise
 
-## Resources
+## 🚀 Quick Start
 
-- [Webshot Archive Site](https://www.webshotarchive.com)
-- [Webshot Archive GitHub Action](https://github.com/webshotarchive/github-action)
-- [Webshot Archive Docs](https://docs.webshotarchive.com/)
-  - [Webshot Archive API](https://docs.webshotarchive.com/docs/api)
-  - [Recipes](https://docs.webshotarchive.com/docs/recipes/push-pr-action)
-  - [Tutorials](https://docs.webshotarchive.com/docs/intro)
+### 1. Create Account & Get Credentials
 
-## Initial Setup
+1. **Sign up** for a [Webshot Archive account](https://www.webshotarchive.com)
+   (freemium available)
+1. **Create client credentials** by following the
+   [setup guide](https://docs.webshotarchive.com/docs/tutorial-basics/create-client-credentials)
+1. **Add credentials** to your GitHub repository secrets:
+   - `CLIENT_ID` - Your Webshot Archive client ID
+   - `CLIENT_SECRET` - Your Webshot Archive client secret
+   - `PROJECT_ID` - Your Webshot Archive project ID
 
-In order for comments on Pull Requests with image diffs, you need to
-[install the Webshot Archive GitHub Action App](https://github.com/apps/webshot-archive-github-action/installations/new)
-. This will give Webshot Archive `Read and write access to pull requests`.
+### 2. Install the GitHub App
 
-Below is an example of how to use the this action in a GitHub Actions workflow.
+For PR commenting functionality, install the
+[Webshot Archive GitHub Action App](https://github.com/apps/webshot-archive-github-action/installations/new)
+to grant necessary permissions.
+
+### 3. Add to Your Workflow
 
 ```yaml
+name: Visual Regression Tests
+
 on:
-  push: # running on push will use previous commit to compare against
-    branches:
-      - main # or any other branch you want to run this action on
-  pull_request: # running on pull_request will use base branch to compare against
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
 
 jobs:
-  main:
-    runs-on: ubuntu-latest # or any other runner you want to use
+  visual-tests:
+    runs-on: ubuntu-latest
     steps:
-      # ...
-      # previous steps should run your tests and generate screenshots locally
-      # ...
+      # Your existing test steps that generate screenshots
+      - name: Run Visual Tests
+        run: |
+          npm run test:visual
+          # or your existing test command
 
-      - name: WebshotArchive Action
+      # Upload screenshots to Webshot Archive
+      - name: Upload to Webshot Archive
         uses: webshotarchive/github-action@latest
         with:
-          screenshotsFolder: dist/cypress # path to where your screenshots are written
+          screenshotsFolder: dist/cypress/screenshots #path to images
           clientId: ${{ secrets.CLIENT_ID }}
           clientSecret: ${{ secrets.CLIENT_SECRET }}
-          projectId: ${{secrets.PROJECT_ID}}
+          projectId: ${{ secrets.PROJECT_ID }}
 ```
 
-Or to just upload images to Webshot Archive and skip comments (and not install
-the GitHub App) you may disable comments with `comment: false`:
+### 4. View Results
+
+- **PR Comments**: Automatic visual diff reports appear in your pull requests
+- **Webshot Archive UI**: View all screenshots and compare them side-by-side
+- **Dashboard**: Track visual changes across your entire project
+
+![PR Comment Example](./docs/assets/github-comment.png)
+![Webshot Archive Dashboard](./docs/assets/pixel-ui.png)
+
+## 📖 Documentation
+
+- **[Getting Started Guide](https://docs.webshotarchive.com/docs/intro)** -
+  Complete setup instructions
+- **[API Reference](https://docs.webshotarchive.com/docs/api)** - Detailed API
+  documentation
+- **[Recipes & Examples](https://docs.webshotarchive.com/docs/recipes/push-pr-action)** -
+  Common use cases
+- **[Tutorials](https://docs.webshotarchive.com/docs/intro)** - Step-by-step
+  guides
+
+## ⚙️ Configuration
+
+### Basic Usage
 
 ```yaml
-   - name: WebshotArchive Action
-        uses: webshotarchive/github-action@latest
-        with:
-          screenshotsFolder: dist/cypress # path to where your screenshots are written
-          clientId: ${{ secrets.CLIENT_ID }}
-          clientSecret: ${{ secrets.CLIENT_SECRET }}
-          projectId: ${{secrets.PROJECT_ID}}
-          comment: false
+- name: Webshot Archive Action
+  uses: webshotarchive/github-action@latest
+  with:
+    screenshotsFolder: dist/cypress/screenshots
+    clientId: ${{ secrets.WEBSHOT_CLIENT_ID }}
+    clientSecret: ${{ secrets.WEBSHOT_CLIENT_SECRET }}
+    projectId: ${{ secrets.WEBSHOT_PROJECT_ID }}
 ```
 
-See the [Getting Started](https://docs.webshotarchive.com/docs/intro) docs for
-more details.
+### Advanced Configuration
 
-## API
+```yaml
+- name: Webshot Archive Action
+  uses: webshotarchive/github-action@latest
+  with:
+    screenshotsFolder: dist/cypress/screenshots
+    clientId: ${{ secrets.WEBSHOT_CLIENT_ID }}
+    clientSecret: ${{ secrets.WEBSHOT_CLIENT_SECRET }}
+    projectId: ${{ secrets.WEBSHOT_PROJECT_ID }}
+    comment: true # Enable PR comments (default: true for PRs)
+    tags: 'ci,visual-testing' # Add custom tags
+    commitSha: ${{ github.sha }} # Custom commit SHA
+    branchName: ${{ github.head_ref }} # Custom branch name
+```
 
-The action supports the following paramets to `with:`
+### Upload Only (No Comments)
 
-| Parameter         | Type    | Required | Default (Pull Request)                      | Default (Push)               | Description                                      |
-| ----------------- | ------- | -------- | ------------------------------------------- | ---------------------------- | ------------------------------------------------ |
-| screenshotsFolder | string  | Yes      | -                                           | -                            | The folder containing the screenshots to upload. |
-| clientId          | string  | Yes      | -                                           | -                            | Your client ID.                                  |
-| clientSecret      | string  | Yes      | -                                           | -                            | Your client secret.                              |
-| projectId         | string  | Yes      | -                                           | -                            | The Webshot Archive projectId.                   |
-| commitSha         | string  | No       | `${{github.event.pull_request.head.sha }}`  | `${{ github.event.after }}`  | The commit SHA represented in the screenshot     |
-| compareCommitSha  | string  | No       | `${{ github.event.pull_request.base.sha }}` | `${{ github.event.before }}` | The commit SHA to compare with.                  |
-| branchName        | string  | No       | `${{ github.head_ref }}`                    | `${GITHUB_REF##*/}`          | The branch associated with the screenshot.       |
-| mergedBranch      | string  | No       | -                                           | \* see below                 | The branch that was merged.                      |
-| comment           | boolean | No       | true                                        | false                        | Whether to comment on the PR.                    |
-| tags              | string  | No       | \* see below                                | \* see below                 | Tags to add to the screenshots.                  |
+```yaml
+- name: Webshot Archive Action
+  uses: webshotarchive/github-action@latest
+  with:
+    screenshotsFolder: dist/cypress/screenshots
+    clientId: ${{ secrets.WEBSHOT_CLIENT_ID }}
+    clientSecret: ${{ secrets.WEBSHOT_CLIENT_SECRET }}
+    projectId: ${{ secrets.WEBSHOT_PROJECT_ID }}
+    comment: false # Disable PR comments
+```
 
-### Notes
+## 📋 Parameters Reference
 
-- `compareBranch`: Is deprecated and will be removed in a future release.
-- `mergedBranch`: The merged branch logic is handled by the Webshot Archive API
-  [here](https://github.com/toshimoto821/webshotarchive/blob/main/src/defaultFields.js#L31-L95).
-  The point is to have the merged branch be the branch that was merged into.
-- `tags`: The tags logic is handled by the Webshot Archive API
-  [here](https://github.com/toshimoto821/webshotarchive/blob/main/src/main.js#L192-L205).
-  Key points:
-  - images ending in (failed).png get `failed` tag.
-  - images with title tags-[tag1, tag2, tag3] get the tags `tag1`, `tag2`,
-    `tag3`.
+| Parameter           | Type    | Required | Default (PR)                              | Default (Push)             | Description                        |
+| ------------------- | ------- | -------- | ----------------------------------------- | -------------------------- | ---------------------------------- |
+| `screenshotsFolder` | string  | ✅       | -                                         | -                          | Path to screenshots directory      |
+| `clientId`          | string  | ✅       | -                                         | -                          | Your Webshot Archive client ID     |
+| `clientSecret`      | string  | ✅       | -                                         | -                          | Your Webshot Archive client secret |
+| `projectId`         | string  | ✅       | -                                         | -                          | Your Webshot Archive project ID    |
+| `commitSha`         | string  | ❌       | `${{github.event.pull_request.head.sha}}` | `${{github.event.after}}`  | Commit SHA for screenshots         |
+| `compareCommitSha`  | string  | ❌       | `${{github.event.pull_request.base.sha}}` | `${{github.event.before}}` | Commit SHA to compare against      |
+| `branchName`        | string  | ❌       | `${{github.head_ref}}`                    | `${GITHUB_REF##*/}`        | Branch name for screenshots        |
+| `mergedBranch`      | string  | ❌       | -                                         | See notes below            | Branch that was merged             |
+| `comment`           | boolean | ❌       | `true`                                    | `false`                    | Enable PR comments                 |
+| `tags`              | string  | ❌       | See notes below                           | See notes below            | Custom tags for screenshots        |
+
+### Important Notes
+
+- **`compareBranch`**: ⚠️ **Deprecated** - Will be removed in a future release
+- **`mergedBranch`**: Automatically handled by the Webshot Archive API for merge
+  scenarios
+- **`tags`**: Automatic tagging rules:
+  - Files ending in `(failed).png` → `failed` tag
+  - Files with `tags-[tag1,tag2,tag3]` in filename → `tag1`, `tag2`, `tag3` tags
+
+## 🔗 Resources
+
+- **[Webshot Archive](https://www.webshotarchive.com)** - Main site
+- **[Documentation](https://docs.webshotarchive.com/)** - Complete docs
+- **[GitHub Repository](https://github.com/webshotarchive/github-action)** -
+  Source code
+- **[API Reference](https://docs.webshotarchive.com/docs/api)** - REST API docs
+
+## 🤝 Getting Help
+
+- **[Discord Community](https://discord.gg/a9qkpVxPnF)** - Chat with the team
+  and community
+- **📚 [Documentation](https://docs.webshotarchive.com/)** - Comprehensive
+  guides and tutorials
+- **🐛
+  [Report Issues](https://github.com/webshotarchive/github-action/issues/new)** -
+  Bug reports and feature requests
+- **💡
+  [Examples](https://docs.webshotarchive.com/docs/recipes/push-pr-action)** -
+  Real-world usage examples
 
 ---
 
----
-
-## Need Help?
-
-- [Discord](https://discord.gg/a9qkpVxPnF) - say hi and ask questions.
-- [Webshot Archive Docs](https://docs.webshotarchive.com) - API Details,
-  tutorials, recipes, and blog posts.
-- [Create an Issue](https://github.com/webshotarchive/github-action/issues/new) -
-  Report a bug or request a feature.
+<div align="center">
+  <p>Made with ❤️ by the <a href="https://www.webshotarchive.com">Webshot Archive</a> team</p>
+</div>

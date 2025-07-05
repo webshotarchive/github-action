@@ -1,9 +1,13 @@
 name: 'Webshot Archive GitHub Action'
-description: 'Upload and archive screenshots from E2E tests'
-author: 'WebshotArchive.com'
+description: |
+  The Webshot Archive GitHub Action seamlessly integrates Webshot Archive into
+  your CI/CD pipeline. Upload screenshots from your test runner and
+  automatically detect visual differences between branches, with intelligent PR
+  commenting for effortless code review
+author: 'webshotArchive.com'
 branding:
-  icon: 'camera'
-  color: 'orange'
+  icon: 'docs/assets/logo-white-bg.png'
+  color: 'black'
 
 # Define your inputs here.
 inputs:
@@ -61,10 +65,6 @@ inputs:
 outputs:
   time:
     description: 'none'
-
-permissions:
-  issues: write
-  pull-requests: write
 
 runs:
   using: node20
