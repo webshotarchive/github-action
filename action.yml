@@ -2,8 +2,8 @@ name: 'Webshot Archive GitHub Action'
 description: 'Upload and archive screenshots from E2E tests'
 author: 'WebshotArchive.com'
 branding:
-  icon: 'camera'
-  color: 'orange'
+  icon: 'docs/assets/logo-white-bg.png'
+  color: 'black'
 
 # Define your inputs here.
 inputs:
