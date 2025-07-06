@@ -53,7 +53,7 @@ name: Visual Regression Tests
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     branches: [main]
 
