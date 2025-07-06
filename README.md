@@ -2,7 +2,7 @@
 
 [![GitHub Super-Linter](https://github.com/webshotarchive/github-action/actions/workflows/linter.yml/badge.svg)](https://github.com/super-linter/super-linter)
 ![CI](https://github.com/webshotarchive/github-action/actions/workflows/ci.yml/badge.svg)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 > **Automate visual regression testing in your GitHub Actions workflow**
 
