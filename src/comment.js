@@ -5,7 +5,7 @@ const COMMENT_IDENTIFIER = '<!-- Webshot Archive Uploaded Images Comment -->'
 
 const createOrUpdateComment = async ({
   repo,
-  issue_number,
+  issueNumber,
   images,
   message,
   projectId,
@@ -15,7 +15,7 @@ const createOrUpdateComment = async ({
   try {
     const bodyString = JSON.stringify({
       repo,
-      issueNumber: issue_number,
+      issueNumber,
       images,
       message
     })
