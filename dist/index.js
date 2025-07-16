@@ -30155,7 +30155,7 @@ const createOrUpdateComment = async ({
       message
     })
     const response = await fetch(
-      `https://api.webshotarchive.com/api/github/actions/comment/${projectId}`,
+      `https://api.webshotarchive.com/api/github/actions/comment/v2/${projectId}`,
       {
         method: 'POST',
         body: bodyString,
