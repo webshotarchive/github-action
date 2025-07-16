@@ -104,7 +104,7 @@ describe('comment', () => {
 
     // Verify fetch was called with the correct parameters
     expect(global.fetch).toHaveBeenCalledWith(
-      'https://api.webshotarchive.com/api/github/actions/comment/test',
+      'https://api.webshotarchive.com/api/github/actions/comment/v2/test',
       expect.objectContaining({
         method: 'POST',
         headers: {
