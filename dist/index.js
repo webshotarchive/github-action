@@ -30143,6 +30143,7 @@ const createOrUpdateComment = async ({
   issueNumber,
   images,
   message,
+  commitSha,
   projectId,
   clientId,
   clientSecret
@@ -30152,7 +30153,8 @@ const createOrUpdateComment = async ({
       repo,
       issueNumber,
       images,
-      message
+      message,
+      commitSha
     })
     const response = await fetch(
       `https://api.webshotarchive.com/api/github/actions/comment/v2/${projectId}`,
