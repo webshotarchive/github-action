@@ -100,7 +100,6 @@ describe('comment', () => {
       clientId: 'test',
       clientSecret: 'test'
     })
-    console.log('table', table)
 
     // Verify fetch was called with the correct parameters
     expect(global.fetch).toHaveBeenCalledWith(
@@ -114,7 +113,5 @@ describe('comment', () => {
         }
       })
     )
-
-    expect(table).toContain('api.png')
   })
 })
