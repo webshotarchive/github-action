@@ -291,7 +291,7 @@ async function run() {
               image: resultJson.data?.id,
               metadata: {
                 ...resultJson.metadata,
-                status: 'diff',
+                status: resultJson.metadata?.compareImage ? 'diff' : 'new',
                 compareCommitSha: resultJson.metadata?.compareCommitSha,
                 compareImage: resultJson.metadata?.compareImage,
                 minDiffPixelsToIgnore: minPixToIgnore,
@@ -325,7 +325,7 @@ async function run() {
       await comment({
         images: imageResponses,
         commitSha,
-        message: 'new screenshots',
+        message: '',
         projectId,
         clientId,
         clientSecret
@@ -335,6 +335,7 @@ async function run() {
       await comment({
         images: [],
         message: `No new screenshots found for commit ${commitSha}`,
+        commitSha,
         projectId,
         clientId,
         clientSecret
