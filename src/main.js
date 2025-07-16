@@ -240,24 +240,46 @@ async function run() {
             `${resultJson.statusCode >= 400 ? '❌' : 'ℹ️'} ${file.name}: ${errorMessage}`
           )
         }
+
         // only push if the response has changed if compareCommitSha is provided
         // or the image is failed
         if (errorMessage) {
           imageResponses.push({
-            ...resultJson.data,
-            metadata: resultJson.metadata,
-            error: errorMessage
+            image: resultJson.data?.id,
+            metadata: {
+              ...resultJson.metadata,
+              status: 'error',
+              error: errorMessage
+            }
           })
           // @todo make it so i can pass in this as a regex
         } else if (failedTestRegex.test(file.path)) {
-          imageResponses.push(resultJson.data)
-        } else if (resultJson.data && resultJson.error) {
           imageResponses.push({
-            ...resultJson.data,
-            metadata: resultJson.metadata,
-            error: resultJson.error
+            image: resultJson.data.id,
+            metadata: {
+              ...resultJson.metadata,
+              status: 'failed',
+              error: 'filepath regex exception'
+            }
+          })
+        } else if (resultJson.data && resultJson.error) {
+          const minPixToIgnore = resultJson.data?.minDiffPixelsToIgnore || 0
+          imageResponses.push({
+            image: resultJson.data.id,
+            metadata: {
+              ...resultJson.metadata,
+              status: 'error',
+              compareCommitSha: resultJson.metadata?.compareCommitSha,
+              compareImage: resultJson.metadata?.compareImage,
+              minDiffPixelsToIgnore: minPixToIgnore,
+              diffCount: resultJson.data?.diffCount,
+              diffImage: resultJson.data?.diffImage,
+              compareImageTimestamp: resultJson.metadata?.compareImageTimestamp,
+              error: resultJson.error
+            }
           })
         } else if (compareCommitSha) {
+          // Diff Images
           // if the image is different from the compare image, push it
           // if there is no compare image, push it (this is a new image)
           const minPixToIgnore = resultJson.data?.minDiffPixelsToIgnore || 0
@@ -266,13 +288,29 @@ async function run() {
             !resultJson.metadata?.compareImage
           ) {
             imageResponses.push({
-              ...resultJson.data,
-              compareImageTimestamp: resultJson.metadata?.compareImageTimestamp
+              image: resultJson.data?.id,
+              metadata: {
+                ...resultJson.metadata,
+                status: 'diff',
+                compareCommitSha: resultJson.metadata?.compareCommitSha,
+                compareImage: resultJson.metadata?.compareImage,
+                minDiffPixelsToIgnore: minPixToIgnore,
+                diffCount: resultJson.data?.diffCount,
+                diffImage: resultJson.data?.diffImage,
+                compareImageTimestamp:
+                  resultJson.metadata?.compareImageTimestamp
+              }
             })
           }
         } else if (resultJson.data) {
-          // if not compareCommitSha, always push?
-          imageResponses.push(resultJson.data)
+          // New Images
+          imageResponses.push({
+            image: resultJson.data?.id,
+            metadata: {
+              ...resultJson.metadata,
+              status: 'new'
+            }
+          })
         }
 
         core.debug(
@@ -287,7 +325,7 @@ async function run() {
       await comment({
         images: imageResponses,
         commitSha,
-        failedTestRegex,
+        message: 'new screenshots',
         projectId,
         clientId,
         clientSecret
@@ -296,7 +334,7 @@ async function run() {
       core.warning('No new screenshots found')
       await comment({
         images: [],
-        message: 'No new screenshots found',
+        message: `No new screenshots found for commit ${commitSha}`,
         projectId,
         clientId,
         clientSecret
