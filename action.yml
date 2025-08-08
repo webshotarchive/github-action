@@ -59,6 +59,12 @@ inputs:
     required: false
     default: ''
 
+  visualIndex:
+    description: 'Metadata: visual index'
+    required: false
+    type: boolean
+    default: false
+
 # Define your outputs here.
 outputs:
   time:

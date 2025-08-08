@@ -30379,6 +30379,7 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('compareBranch', opts.compareBranch)
   formData.append('projectId', opts.projectId)
   formData.append('eventName', opts.eventName)
+  formData.append('visualIndex', opts.visualIndex)
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
   }
@@ -30486,6 +30487,7 @@ async function run() {
     const failedTestRegex = new RegExp(failedTestPattern)
     // nondefaulted fields
     const tags = core.getInput('tags')
+    const visualIndex = core.getInput('visualIndex') || false
 
     core.info(`head commit sha: ${commitSha}`)
     core.info(`base commit sha: ${compareCommitSha}`)
@@ -30547,7 +30549,8 @@ async function run() {
           branchName,
           tags: Array.from(allTags),
           mergedBranch,
-          eventName
+          eventName,
+          visualIndex
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
