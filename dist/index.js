@@ -30381,8 +30381,8 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('projectId', opts.projectId)
   formData.append('eventName', opts.eventName)
   formData.append('visualIndex', opts.visualIndex)
-  formData.append('authorName', opts.author?.name)
-  formData.append('authorEmail', opts.author?.email)
+  formData.append('authorName', opts.author?.name || '')
+  formData.append('authorEmail', opts.author?.email || '')
 
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
