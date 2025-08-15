@@ -30332,6 +30332,7 @@ const { wait } = __nccwpck_require__(8644)
 const fs = (__nccwpck_require__(9896).promises)
 const path = __nccwpck_require__(6928)
 const mime = __nccwpck_require__(4096)
+const { execSync } = __nccwpck_require__(5317)
 const { comment } = __nccwpck_require__(3220)
 const {
   getDefaultCommitSha,
@@ -30380,6 +30381,9 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('projectId', opts.projectId)
   formData.append('eventName', opts.eventName)
   formData.append('visualIndex', opts.visualIndex)
+  formData.append('authorName', opts.author?.name || '')
+  formData.append('authorEmail', opts.author?.email || '')
+
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
   }
@@ -30461,6 +30465,56 @@ function parseTagsFromName(fileName) {
 }
 
 /**
+ * Get git commit information from a commit SHA
+ * @param {string} commitSha - The commit SHA to get information for
+ * @returns {Object} Object containing commit information
+ */
+function getGitCommitInfo(commitSha) {
+  try {
+    // Get commit message
+    const message = execSync(`git show -s --format=%B ${commitSha}`)
+      .toString()
+      .trim()
+
+    // Get author name
+    const authorName = execSync(`git show -s --format=%an ${commitSha}`)
+      .toString()
+      .trim()
+
+    // Get author email
+    const authorEmail = execSync(`git show -s --format=%ae ${commitSha}`)
+      .toString()
+      .trim()
+
+    // Get commit date
+    const commitDate = execSync(`git show -s --format=%ci ${commitSha}`)
+      .toString()
+      .trim()
+
+    // Get commit hash (short)
+    const shortHash = execSync(`git show -s --format=%h ${commitSha}`)
+      .toString()
+      .trim()
+
+    return {
+      message,
+      author: {
+        name: authorName,
+        email: authorEmail
+      },
+      date: commitDate,
+      shortHash,
+      fullHash: commitSha
+    }
+  } catch (error) {
+    core.warning(
+      `Failed to get git commit info for ${commitSha}: ${error.message}`
+    )
+    return null
+  }
+}
+
+/**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
  */
@@ -30495,6 +30549,15 @@ async function run() {
     core.debug(`eventName: ${eventName}`)
     core.debug(`comment: ${commentInput}, ${typeof commentInput}`)
 
+    // get the git commit from commitSha
+    const gitCommitInfo = getGitCommitInfo(commitSha)
+    const author = gitCommitInfo
+      ? gitCommitInfo.author
+      : {
+          name: '',
+          email: ''
+        }
+
     const shouldComment = commentInput === true || commentInput === 'true'
     const isPullRequest = process.env.GITHUB_EVENT_NAME === 'pull_request'
 
@@ -30502,6 +30565,7 @@ async function run() {
       throw new Error('screenshotsFolder is required')
     }
 
+    core.debug(`author: ${author.name}`)
     core.debug(`isPullRequest: ${isPullRequest}`)
     core.debug(`projectId: ${projectId}`)
     core.debug(`compareCommitSha: ${compareCommitSha}`)
@@ -30550,7 +30614,8 @@ async function run() {
           tags: Array.from(allTags),
           mergedBranch,
           eventName,
-          visualIndex
+          visualIndex,
+          author
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
@@ -30680,7 +30745,8 @@ async function run() {
 
 module.exports = {
   run,
-  parseTagsFromName
+  parseTagsFromName,
+  getGitCommitInfo
 }
 
 
