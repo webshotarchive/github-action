@@ -30384,6 +30384,10 @@ function uploadImage(imageFile, fileName, opts = {}) {
   formData.append('authorName', opts.author?.name || '')
   formData.append('authorEmail', opts.author?.email || '')
 
+  if (opts.prNumber) {
+    formData.append('prNumber', opts.prNumber)
+  }
+
   if (opts.mergedBranch) {
     formData.append('mergedBranch', opts.mergedBranch)
   }
@@ -30543,6 +30547,8 @@ async function run() {
     const tags = core.getInput('tags')
     const visualIndex = core.getInput('visualIndex') || false
 
+    const prNumber = github.context.payload.pull_request?.number
+
     core.info(`head commit sha: ${commitSha}`)
     core.info(`base commit sha: ${compareCommitSha}`)
     core.debug(`defaultMergedBranchName: ${defaultMergedBranchName}`)
@@ -30615,7 +30621,8 @@ async function run() {
           mergedBranch,
           eventName,
           visualIndex,
-          author
+          author,
+          prNumber
         })
         const resultJson = await response.json()
         core.debug(`image response: ${JSON.stringify(resultJson, null, 2)}`)
